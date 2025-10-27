@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ItemController;
 
 // Route awal
 Route::get('/', function () {
@@ -22,10 +25,15 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('admin')->name('admin.')->group(function () {
 
-        //Route Produk
-        Route::get('/products', function () {
-            return view('admin.products.index');
-        })->name('products.index');
+       // CRUD routes for Categories (Both Product & Application)
+        // URL: /admin/categories, /admin/categories/create, etc.
+        // Name: admin.categories.index, admin.categories.create, etc.
+        Route::resource('categories', CategoryController::class);
+
+        // CRUD routes for Items (Both Product & Application)
+        // URL: /admin/items, /admin/items/create, etc.
+        // Name: admin.items.index, admin.items.create, etc.
+        Route::resource('items', ItemController::class);
 
         //Route Blog
         Route::get('/blog', function () {

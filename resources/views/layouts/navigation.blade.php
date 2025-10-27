@@ -14,30 +14,38 @@
                     </x-nav-link>
 
                     {{-- Admin Links --}}
-                    <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
-                        {{ __('Produk') }}
+                    {{-- Link ke Daftar Kategori --}}
+                    <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                        {{ __('Kategori Produk') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.index')">
+                    {{-- Link ke Daftar Item (diganti dari products ke items) --}}
+                    <x-nav-link :href="route('admin.items.index')" :active="request()->routeIs('admin.items.*')">
+                        {{ __('Produk') }} {{-- Ganti teks jika perlu --}}
+                    </x-nav-link>
+
+                    {{-- Link Blog (Gunakan route name yg benar jika sudah dibuat) --}}
+                    <x-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
                         {{ __('Blog') }}
                     </x-nav-link>
 
-                    {{-- ↓↓↓ TAMBAHKAN LINK PELATIHAN ↓↓↓ --}}
-                    <x-nav-link href="#" :active="request()->is('admin/pelatihan*')"> {{-- Ganti href & active check --}}
+                    {{-- Link Pelatihan (Placeholder) --}}
+                    <x-nav-link href="#" :active="request()->is('admin/pelatihan*')">
                         {{ __('Pelatihan') }}
                     </x-nav-link>
 
-                     {{-- ↓↓↓ TAMBAHKAN LINK E-KATALOG ↓↓↓ --}}
-                    <x-nav-link href="#" :active="request()->is('admin/e-katalog*')"> {{-- Ganti href & active check --}}
+                    {{-- Link E-Katalog (Placeholder) --}}
+                    <x-nav-link href="#" :active="request()->is('admin/e-katalog*')">
                         {{ __('E-Katalog') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.index')">
+                    {{-- Link Karir (Gunakan route name yg benar jika sudah dibuat) --}}
+                    <x-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                         {{ __('Karir') }}
                     </x-nav-link>
 
-                    {{-- ↓↓↓ TAMBAHKAN LINK KONTAK ↓↓↓ --}}
-                    <x-nav-link href="#" :active="request()->is('admin/kontak*')"> {{-- Ganti href & active check --}}
+                    {{-- Link Kontak (Placeholder) --}}
+                    <x-nav-link href="#" :active="request()->is('admin/kontak*')">
                         {{ __('Kontak') }}
                     </x-nav-link>
                     {{-- End Admin Links --}}
@@ -93,29 +101,25 @@
             </x-responsive-nav-link>
 
              {{-- Responsive Admin Links --}}
-             <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
-                 {{ __('Produk') }}
+             <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                 {{ __('Kategori') }}
              </x-responsive-nav-link>
-             <x-responsive-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.index')">
+             <x-responsive-nav-link :href="route('admin.items.index')" :active="request()->routeIs('admin.items.*')">
+                 {{ __('Produk/Aplikasi') }}
+             </x-responsive-nav-link>
+             <x-responsive-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
                  {{ __('Blog') }}
              </x-responsive-nav-link>
-
-             {{-- ↓↓↓ TAMBAHKAN RESPONSIVE PELATIHAN ↓↓↓ --}}
-             <x-responsive-nav-link href="#" :active="request()->is('admin/pelatihan*')"> {{-- Ganti href & active check --}}
+             <x-responsive-nav-link href="#" :active="request()->is('admin/pelatihan*')">
                  {{ __('Pelatihan') }}
              </x-responsive-nav-link>
-
-             {{-- ↓↓↓ TAMBAHKAN RESPONSIVE E-KATALOG ↓↓↓ --}}
-             <x-responsive-nav-link href="#" :active="request()->is('admin/e-katalog*')"> {{-- Ganti href & active check --}}
+             <x-responsive-nav-link href="#" :active="request()->is('admin/e-katalog*')">
                  {{ __('E-Katalog') }}
              </x-responsive-nav-link>
-
-             <x-responsive-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.index')">
+             <x-responsive-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                  {{ __('Karir') }}
              </x-responsive-nav-link>
-
-             {{-- ↓↓↓ TAMBAHKAN RESPONSIVE KONTAK ↓↓↓ --}}
-             <x-responsive-nav-link href="#" :active="request()->is('admin/kontak*')"> {{-- Ganti href & active check --}}
+             <x-responsive-nav-link href="#" :active="request()->is('admin/kontak*')">
                  {{ __('Kontak') }}
              </x-responsive-nav-link>
             {{-- End Responsive Admin Links --}}

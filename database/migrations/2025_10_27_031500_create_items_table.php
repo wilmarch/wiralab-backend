@@ -8,11 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_category_id')->constrained('application_categories')->onDelete('cascade');
-            $table->string('name');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade'); // Link to categories table
+            $table->enum('type', ['product', 'application']); // Differentiate item type
+            $table->string('name'); // Product or Application Name
             $table->string('slug')->unique();
+            $table->string('part_number')->nullable()->unique(); // Mostly for products
             $table->text('description')->nullable();
             $table->string('image_url')->nullable();
             $table->timestamps();
@@ -21,6 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('applications');
+        Schema::dropIfExists('items');
     }
 };
