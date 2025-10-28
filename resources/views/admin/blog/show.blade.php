@@ -25,19 +25,17 @@
             {{-- KARTU UTAMA --}}
             <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-xl overflow-hidden">
                 
-                {{-- AREA 1: GAMBAR (SUPER-MINI, TERPUSAT) --}}
-                {{-- Mengurangi padding dan tinggi container secara drastis --}}
-                <div class="w-full bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 p-4"> {{-- Padding lebih kecil: p-4 --}}
+                {{-- AREA 1: GAMBAR (DIPUSATKAN DAN LEBARNYA DIKONTROL) --}}
+                <div classT="w-full bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 p-6">
                     @if ($blog->image_url)
                         <img src="{{ Storage::url($blog->image_url) }}" alt="{{ $blog->title }}" 
-                             {{-- KUNCI PERUBAHAN: max-w-xs (sekitar 320px) dan max-h-36 (sekitar 144px) --}}
-                             class="max-w-xs max-h-36 mx-auto object-contain rounded-lg shadow-md transition duration-300 hover:opacity-80 cursor-pointer"
+                             {{-- KUNCI PERUBAHAN: Gambar tidak lagi full-width, tapi terpusat --}}
+                             class="max-w-lg mx-auto h-auto object-contain rounded-lg shadow-md transition duration-300 hover:opacity-80 cursor-pointer"
                              onclick="window.open(this.src);">
                     @else
-                        {{-- Tinggi placeholder juga disesuaikan --}}
-                        <div class="w-full h-24 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
-                            <i class="bi bi-image-fill text-3xl mb-1"></i> 
-                            <span class="text-sm font-medium block">Tidak Ada Gambar</span>
+                        <div class="w-full h-48 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                            <i class="bi bi-image-fill text-4xl mb-2"></i> 
+                            <span class="text-base font-medium block">Tidak Ada Gambar</span>
                         </div>
                     @endif
                 </div>

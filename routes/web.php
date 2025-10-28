@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\EkatalogController;
+use App\Http\Controllers\Admin\MessageController;
 
 Route::get('/', function () {
     return Redirect::route('login');
@@ -25,6 +27,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('items', ItemController::class);
         Route::resource('blog', PostController::class);
+        Route::get('/e-katalog', [EkatalogController::class, 'index'])->name('ekatalog.index');
+        Route::post('/e-katalog/update', [EkatalogController::class, 'update'])->name('ekatalog.update');
+        Route::resource('kontak', MessageController::class);
 
 
         // Route Karir (Biarkan ini dulu, akan kita kerjakan nanti)

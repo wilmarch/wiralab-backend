@@ -13,42 +13,70 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    {{-- Admin Links --}}
-                    {{-- Link ke Daftar Kategori --}}
-                    <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
-                        {{ __('Kategori Produk') }}
-                    </x-nav-link>
+                    {{-- === DROPDOWN PRODUK/APLIKASI === --}}
+                    @php
+                        // Cek apakah route saat ini adalah bagian dari Kategori atau Item
+                        $productMenuActive = request()->routeIs('admin.categories.*') || request()->routeIs('admin.items.*');
+                    @endphp
 
-                    {{-- Link ke Daftar Item (diganti dari products ke items) --}}
-                    <x-nav-link :href="route('admin.items.index')" :active="request()->routeIs('admin.items.*')">
-                        {{ __('Produk') }} {{-- Ganti teks jika perlu --}}
-                    </x-nav-link>
+                    <div class="hidden sm:flex sm:items-center sm:ms-10">
+                        <x-dropdown align="left" width="48">
+                            {{-- Tombol Trigger Dropdown --}}
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
+                                            {{ $productMenuActive 
+                                                ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' 
+                                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' 
+                                            }} 
+                                            focus:outline-none">
+                                    <div>{{ __('Produk/Aplikasi') }}</div>
 
-                    {{-- Link Blog (Gunakan route name yg benar jika sudah dibuat) --}}
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+
+                            {{-- Konten Dropdown --}}
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                                    {{ __('Kelola Kategori') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.items.index')" :active="request()->routeIs('admin.items.*')">
+                                    {{ __('Kelola Item') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                    {{-- === AKHIR DROPDOWN === --}}
+
+
                     <x-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
                         {{ __('Blog') }}
+                    </x-nav-link>
+
+                    {{-- Link E-Katalog (Aktif) --}}
+                    <x-nav-link :href="route('admin.ekatalog.index')" :active="request()->routeIs('admin.ekatalog.index')">
+                        {{ __('E-Katalog') }}
                     </x-nav-link>
 
                     {{-- Link Pelatihan (Placeholder) --}}
                     <x-nav-link href="#" :active="request()->is('admin/pelatihan*')">
                         {{ __('Pelatihan') }}
                     </x-nav-link>
-
-                    {{-- Link E-Katalog (Placeholder) --}}
-                    <x-nav-link href="#" :active="request()->is('admin/e-katalog*')">
-                        {{ __('E-Katalog') }}
-                    </x-nav-link>
-
-                    {{-- Link Karir (Gunakan route name yg benar jika sudah dibuat) --}}
-                    <x-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
+                    
+                    {{-- Link Karir (Placeholder) --}}
+                    <x-nav-link href="#" :active="request()->is('admin/careers*')">
                         {{ __('Karir') }}
                     </x-nav-link>
-
-                    {{-- Link Kontak (Placeholder) --}}
-                    <x-nav-link href="#" :active="request()->is('admin/kontak*')">
+                    
+                    {{-- Link Kontak (Aktif) --}}
+                    <x-nav-link :href="route('admin.kontak.index')" :active="request()->routeIs('admin.kontak.*')">
                         {{ __('Kontak') }}
                     </x-nav-link>
-                    {{-- End Admin Links --}}
+                    
                 </div>
             </div>
 
@@ -64,18 +92,24 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
+
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </div>
                         </button>
                     </x-slot>
+
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+
+                            <x-dropdown-link :href="route('logout')"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
@@ -100,26 +134,31 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-             {{-- Responsive Admin Links --}}
+             {{-- Responsive Admin Links (Link dropdown dipisah di mobile) --}}
              <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
-                 {{ __('Kategori') }}
+                 {{ __('Kelola Kategori') }}
              </x-responsive-nav-link>
              <x-responsive-nav-link :href="route('admin.items.index')" :active="request()->routeIs('admin.items.*')">
-                 {{ __('Produk/Aplikasi') }}
+                 {{ __('Kelola Item') }}
              </x-responsive-nav-link>
+             
              <x-responsive-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
                  {{ __('Blog') }}
              </x-responsive-nav-link>
+             <x-responsive-nav-link :href="route('admin.ekatalog.index')" :active="request()->routeIs('admin.ekatalog.index')">
+                 {{ __('E-Katalog') }}
+             </x-responsive-nav-link>
+
+             {{-- Placeholders --}}
              <x-responsive-nav-link href="#" :active="request()->is('admin/pelatihan*')">
                  {{ __('Pelatihan') }}
              </x-responsive-nav-link>
-             <x-responsive-nav-link href="#" :active="request()->is('admin/e-katalog*')">
-                 {{ __('E-Katalog') }}
-             </x-responsive-nav-link>
-             <x-responsive-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
+             <x-responsive-nav-link href="#" :active="request()->is('admin/careers*')">
                  {{ __('Karir') }}
              </x-responsive-nav-link>
-             <x-responsive-nav-link href="#" :active="request()->is('admin/kontak*')">
+             
+             {{-- Link Kontak (Aktif) --}}
+             <x-responsive-nav-link :href="route('admin.kontak.index')" :active="request()->routeIs('admin.kontak.*')">
                  {{ __('Kontak') }}
              </x-responsive-nav-link>
             {{-- End Responsive Admin Links --}}
