@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\EkatalogController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\TrainingController;
+use App\Http\Controllers\Admin\TrainingRegistrationController;
 
 Route::get('/', function () {
     return Redirect::route('login');
@@ -30,6 +32,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/e-katalog', [EkatalogController::class, 'index'])->name('ekatalog.index');
         Route::post('/e-katalog/update', [EkatalogController::class, 'update'])->name('ekatalog.update');
         Route::resource('kontak', MessageController::class);
+        Route::resource('pelatihan', TrainingController::class); 
+        Route::post('pelatihan-pdf-update', [TrainingController::class, 'updatePdf'])->name('pelatihan.updatePdf');
+        Route::resource('pendaftar-pelatihan', TrainingRegistrationController::class);
 
 
         // Route Karir (Biarkan ini dulu, akan kita kerjakan nanti)

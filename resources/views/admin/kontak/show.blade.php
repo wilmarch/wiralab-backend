@@ -1,12 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        {{-- Menggunakan flex-box untuk menyejajarkan Judul dan Tombol --}}
         <div class="flex justify-between items-center">
             <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Detail Pesan Masuk') }}
             </h2>
             
-            {{-- TOMBOL KEMBALI DIPINDAH KE SINI --}}
+            {{-- TOMBOL KEMBALI DI HEADER --}}
             <a href="{{ route('admin.kontak.index') }}" 
                class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-lg text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                 <i class="bi bi-arrow-left me-2"></i> Kembali ke Daftar
@@ -20,12 +19,6 @@
             {{-- KARTU UTAMA --}}
             <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-xl overflow-hidden">
                 
-                {{-- HEADER AKSI DIKOSONGKAN/DIHAPUS --}}
-                {{-- <div class="px-5 py-3 bg-gray-50 dark:bg-gray-700 flex justify-start ...">
-                    ... (Tombol kembali tadinya di sini)
-                </div> --}}
-
-                {{-- AREA DETAIL PESAN --}}
                 <div class="p-5 md:p-6">
                     
                     {{-- Judul (Subjek) Postingan --}}
@@ -47,27 +40,43 @@
                             </dd>
                         </div>
                         
-                        {{-- Email --}}
-                        <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">EMAIL</DT>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0">
-                                {{ $kontak->email }}
-                            </dd>
-                        </div>
-
-                        {{-- Telepon --}}
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">TELEPON</DT>
-                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0">
-                                {{ $kontak->phone ?? '-' }}
-                            </dd>
-                        </div>
-
                         {{-- Diterima --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">DITERIMA PADA</dt>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0">
                                 {{ $kontak->created_at->format('d M Y H:i:s') }}
+                            </dd>
+                        </div>
+                        
+                        {{-- Email (LINK) --}}
+                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">EMAIL</DT>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0 font-medium">
+                                <a href="mailto:{{ $kontak->email }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                    <i class="bi bi-envelope-fill me-1 text-blue-500"></i> {{ $kontak->email }}
+                                </a>
+                            </dd>
+                        </div>
+
+                        {{-- Telepon (LINK TEL & WA) --}}
+                        <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">TELEPON</DT>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0 space-x-4">
+                                @php
+                                    // PERBAIKAN: Gunakan namespace penuh untuk helper Str agar tidak error
+                                    $cleanPhone = preg_replace('/[^0-9]/', '', $kontak->phone);
+                                    $waNumber = \Illuminate\Support\Str::startsWith($cleanPhone, '0') ? '62' . substr($cleanPhone, 1) : $cleanPhone;
+                                @endphp
+                                
+                                {{-- Link Telepon --}}
+                                <a href="tel:{{ $kontak->phone }}" class="text-gray-900 dark:text-gray-100 hover:underline font-medium">
+                                    <i class="bi bi-telephone-fill me-1 text-blue-500"></i> {{ $kontak->phone ?? '-' }}
+                                </a>
+                                
+                                {{-- Link WhatsApp --}}
+                                <a href="https://wa.me/{{ $waNumber }}" target="_blank" class="text-green-600 dark:text-green-400 hover:underline font-medium">
+                                    <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                                </a>
                             </dd>
                         </div>
                         
