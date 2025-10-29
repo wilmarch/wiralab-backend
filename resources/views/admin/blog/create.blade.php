@@ -32,11 +32,13 @@
                              <x-input-error :messages="$errors->get('post_type')" class="mt-2" />
                         </div>
 
-                        {{-- Konten --}}
+                        {{-- Konten (TRIX EDITOR) --}}
                         <div class="mb-4">
                             <x-input-label for="content" :value="__('Konten')" />
-                            {{-- TODO: Ganti textarea ini dengan Rich Text Editor (CKEditor/Trix) nanti --}}
-                            <textarea id="content" name="content" rows="15" class="block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">{{ old('content') }}</textarea>
+                            {{-- 1. Input tersembunyi --}}
+                            <input id="content" type="hidden" name="content" value="{{ old('content') }}">
+                            {{-- 2. Editor Trix --}}
+                            <trix-editor input="content" class="trix-content block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"></trix-editor>
                             <x-input-error :messages="$errors->get('content')" class="mt-2" />
                         </div>
 

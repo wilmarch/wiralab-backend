@@ -19,17 +19,15 @@
     </x-slot>
 
     <div class="py-6 sm:py-8">
-        {{-- MENGURANGI LEBAR KONTEN KESELURUHAN MENJADI max-w-3xl --}}
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8"> 
             
             {{-- KARTU UTAMA --}}
             <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-xl overflow-hidden">
                 
-                {{-- AREA 1: GAMBAR (DIPUSATKAN DAN LEBARNYA DIKONTROL) --}}
-                <div classT="w-full bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 p-6">
+                {{-- AREA 1: GAMBAR (Tetap Sama) --}}
+                <div class="w-full bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 p-6">
                     @if ($blog->image_url)
                         <img src="{{ Storage::url($blog->image_url) }}" alt="{{ $blog->title }}" 
-                             {{-- KUNCI PERUBAHAN: Gambar tidak lagi full-width, tapi terpusat --}}
                              class="max-w-lg mx-auto h-auto object-contain rounded-lg shadow-md transition duration-300 hover:opacity-80 cursor-pointer"
                              onclick="window.open(this.src);">
                     @else
@@ -43,15 +41,14 @@
                 {{-- AREA 2: JUDUL & DETAIL UTAMA --}}
                 <div class="p-6 md:p-8">
                     
-                    {{-- Judul Postingan (Focal Point) --}}
+                    {{-- Judul Postingan (Tetap Sama) --}}
                     <div class="border-b pb-4 mb-5 dark:border-gray-700">
                         <dt class="text-xs font-medium text-gray-500 dark:text-gray-400">JUDUL POSTINGAN</dt>
                         <dd class="mt-0.5 text-2xl font-extrabold text-gray-900 dark:text-white">{{ $blog->title }}</dd>
                     </div>
 
-                    {{-- DETAIL INFORMASI (Gaya List Rapat) --}}
+                    {{-- DETAIL INFORMASI (Tetap Sama) --}}
                     <dl class="rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
-                        
                         {{-- Tipe --}}
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">TIPE</dt>
@@ -63,7 +60,6 @@
                                 @endif
                             </dd>
                         </div>
-                        
                         {{-- Status --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">STATUS</dt>
@@ -75,19 +71,16 @@
                                 @endif
                             </dd>
                         </div>
-
                         {{-- Dibuat Pada --}}
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">DIBUAT PADA</DT>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0">{{ $blog->created_at->format('d M Y H:i:s') }}</dd>
                         </div>
-                        
                         {{-- Diperbarui Terakhir --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">DIPERBARUI PADA</DT>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0">{{ $blog->updated_at->format('d M Y H:i:s') }}</dd>
                         </div>
-                        
                         {{-- Slug --}}
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">SLUG (URL KEY)</dt>
@@ -99,19 +92,21 @@
                     {{-- KONTEN LENGKAP --}}
                     <section class="mt-8 pt-6 border-t dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Konten Lengkap</h4>
-                        <div class="text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
+                        
+                        {{-- ↓↓↓ PERUBAHAN DI SINI ↓↓↓ --}}
+                        {{-- Menggunakan kelas 'trix-output' (dari app.css) dan {!! clean(...) !!} --}}
+                        <div class="trix-output text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
                             @if ($blog->content)
-                                {{-- whitespace-pre-wrap menjaga format paragraf dari textarea --}}
-                                <p class="whitespace-pre-wrap">{{ $blog->content }}</p>
+                                {!! clean($blog->content) !!}
                             @else
                                 <p class="text-gray-500 dark:text-gray-400 italic">Tidak ada konten.</p>
                             @endif
                         </div>
+                        {{-- ↑↑↑ AKHIR PERUBAHAN ↑↑↑ --}}
+                        
                     </section>
                 </div>
-                {{-- AKHIR BODY KARTU --}}
             </div>
-            {{-- AKHIR KARTU UTAMA --}}
         </div>
     </div>
 </x-app-layout>

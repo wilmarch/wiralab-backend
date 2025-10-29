@@ -1,6 +1,5 @@
 <x-app-layout>
     <x-slot name="header">
-        {{-- PERBAIKAN: $post -> $blog --}}
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Edit Postingan: ') . $blog->title }}
         </h2>
@@ -10,7 +9,6 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-xl">
                 
-                {{-- PERBAIKAN: ['blog' => $post] -> $blog (Lebih sederhana dan benar) --}}
                 <form method="POST" action="{{ route('admin.blog.update', $blog) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
@@ -20,7 +18,6 @@
                         {{-- Judul Postingan --}}
                         <div class="mb-4">
                             <x-input-label for="title" :value="__('Judul Postingan')" />
-                            {{-- PERBAIKAN: $post -> $blog --}}
                             <x-text-input id="title" class="block mt-1 w-full" type="text" name="title" :value="old('title', $blog->title)" required autofocus />
                             <x-input-error :messages="$errors->get('title')" class="mt-2" />
                         </div>
@@ -29,23 +26,21 @@
                         <div class="mb-4">
                              <x-input-label for="post_type" :value="__('Tipe Postingan')" />
                              <select name="post_type" id="post_type" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required>
-                                 {{-- PERBAIKAN: $post -> $blog --}}
                                  <option value="artikel" {{ old('post_type', $blog->post_type) == 'artikel' ? 'selected' : '' }}>Artikel</option>
                                  <option value="berita" {{ old('post_type', $blog->post_type) == 'berita' ? 'selected' : '' }}>Berita</option>
                              </select>
                              <x-input-error :messages="$errors->get('post_type')" class="mt-2" />
                         </div>
 
-                        {{-- Konten --}}
+                        {{-- Konten (TRIX EDITOR) --}}
                         <div class="mb-4">
                             <x-input-label for="content" :value="__('Konten')" />
-                            {{-- PERBAIKAN: $post -> $blog --}}
-                            <textarea id="content" name="content" rows="15" class="block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">{{ old('content', $blog->content) }}</textarea>
+                            <input id="content" type="hidden" name="content" value="{{ old('content', $blog->content) }}">
+                            <trix-editor input="content" class="trix-content block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"></trix-editor>
                             <x-input-error :messages="$errors->get('content')" class="mt-2" />
                         </div>
 
                         {{-- Gambar Saat Ini --}}
-                        {{-- PERBAIKAN: $post -> $blog --}}
                         @if ($blog->image_url)
                             <div class="mb-4">
                                 <x-input-label :value="__('Gambar Saat Ini')" />
@@ -64,7 +59,6 @@
                         {{-- Status Publish --}}
                         <div class="block mb-4">
                             <label for="is_published" class="inline-flex items-center">
-                                {{-- PERBAIKAN: $post -> $blog --}}
                                 <input id="is_published" name="is_published" type="checkbox" value="1" {{ old('is_published', $blog->is_published) ? 'checked' : '' }} class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800">
                                 <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Publikasikan Postingan') }}</span>
                             </label>
