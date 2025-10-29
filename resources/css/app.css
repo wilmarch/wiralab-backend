@@ -1,3 +1,48 @@
+@import "trix/dist/trix.css"; 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.trix-content ul {
+    list-style-type: disc !important; 
+    margin-left: 1.25rem !important;
+}
+
+.trix-content ol {
+    list-style-type: decimal !important;
+    margin-left: 1.25rem !important;
+}
+
+.trix-output p,
+.trix-output div {
+    text-align: justify !important; 
+    margin-bottom: 1em; 
+    line-height: 1.6; 
+}
+
+.trix-output ul {
+    list-style-type: disc !important; 
+    margin-left: 1.25rem !important;
+    padding-left: 1rem;
+}
+
+.trix-output ol {
+    list-style-type: decimal !important; 
+    margin-left: 1.25rem !important;
+    padding-left: 1rem;
+}
+
+.trix-output li {
+    text-align: justify !important;
+    margin-bottom: 0.5em;
+}
+
+.trix-output strong, .trix-output b {
+    font-weight: bold;
+}
+
+.trix-output em, .trix-output i {
+    font-style: italic;
+}

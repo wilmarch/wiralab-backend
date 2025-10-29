@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Career;
-use App\Models\JobCategory;
+use App\Models\JobCategory; // Pastikan model ini ada
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class CareerController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         $careers = Career::with('jobCategory')
@@ -19,6 +22,9 @@ class CareerController extends Controller
         return view('admin.careers.index', compact('careers'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
         $jobCategories = JobCategory::orderBy('name')->get();
@@ -27,20 +33,22 @@ class CareerController extends Controller
         return view('admin.careers.create', compact('jobCategories', 'minDate'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        // 1. Validasi Input
+        // Validasi Input (requirements sekarang required)
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'job_category_id' => 'required|exists:job_categories,id',
             'description' => 'required|string',
-            'requirements' => 'nullable|string',
-            // PERUBAHAN DI SINI: 'after_or_equal:today' -> 'after:today'
-            'closing_date' => 'required|date|after:today',
+            'requirements' => 'required|string', // WAJIB
+            'closing_date' => 'required|date|after:today', // WAJIB & setelah hari ini
             'is_active' => 'nullable|boolean',
         ]);
 
-        // 2. Generate Slug
+        // Generate Slug
         $validatedData['slug'] = Str::slug($validatedData['title']);
         $originalSlug = $validatedData['slug'];
         $count = 1;
@@ -48,7 +56,6 @@ class CareerController extends Controller
             $validatedData['slug'] = $originalSlug . '-' . $count++;
         }
 
-        // 3. Penanganan Checkbox
         $validatedData['is_active'] = $request->has('is_active');
         Career::create($validatedData);
 
@@ -56,41 +63,50 @@ class CareerController extends Controller
                          ->with('success', 'Lowongan baru berhasil ditambahkan!');
     }
 
-    public function show(Career $karir)
+    /**
+     * Display the specified resource.
+     */
+    public function show(Career $karir) // Menggunakan $karir agar cocok dengan route
     {
         $karir->load('jobCategory'); 
         return view('admin.careers.show', compact('karir'));
     }
 
-    public function edit(Career $karir)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Career $karir) // Menggunakan $karir
     {
         $jobCategories = JobCategory::orderBy('name')->get();
-        // Tentukan tanggal 'min' untuk edit
-        // Jika tanggal lamaran lama sudah lewat, min adalah tanggal lama
-        // Jika belum, min adalah besok
+        
         $minDate = now()->addDay()->format('Y-m-d');
-        if ($karir->closing_date && $karir->closing_date->isPast()) {
-            $minDate = $karir->closing_date->format('Y-m-d');
+        // Logika min date untuk form edit
+        if ($karir->closing_date && $karir->closing_date->isAfter(now())) {
+             $minDate = now()->addDay()->format('Y-m-d');
+        } else {
+             // Jika sudah lewat, biarkan tanggal lama sebagai min (atau 'besok' jika ingin paksa perbarui)
+             $minDate = $karir->closing_date ? $karir->closing_date->format('Y-m-d') : $minDate;
         }
         
         return view('admin.careers.edit', compact('karir', 'jobCategories', 'minDate'));
     }
 
-    public function update(Request $request, Career $karir)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Career $karir) // Menggunakan $karir
     {
-        // 1. Validasi Input
+        // Validasi Input (requirements sekarang required)
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'job_category_id' => 'required|exists:job_categories,id',
             'description' => 'required|string',
-            'requirements' => 'nullable|string',
-            // PERUBAHAN DI SINI: 'after_or_equal:today' -> 'after:today'
-            // (Catatan: Ini akan memaksa admin memilih tanggal baru jika lowongan lama sudah kedaluwarsa)
-            'closing_date' => 'required|date|after:today', 
+            'requirements' => 'required|string', // WAJIB
+            'closing_date' => 'required|date|after:today', // WAJIB & setelah hari ini
             'is_active' => 'nullable|boolean',
         ]);
 
-        // 2. Penanganan Slug
+        // Penanganan Slug
         if ($karir->title !== $validatedData['title']) {
             $validatedData['slug'] = Str::slug($validatedData['title']);
             $originalSlug = $validatedData['slug'];
@@ -107,7 +123,10 @@ class CareerController extends Controller
                          ->with('success', 'Lowongan berhasil diperbarui!');
     }
 
-    public function destroy(Career $karir)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Career $karir) 
     {
         $karir->delete();
         return redirect()->route('admin.careers.index')

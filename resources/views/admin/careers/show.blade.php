@@ -75,9 +75,11 @@
                     {{-- DESKRIPSI --}}
                     <section class="mt-8 pt-6 border-t dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Deskripsi Pekerjaan</h4>
-                        <div class="text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
+                        
+                        {{-- KODE DIRAPIKAN: Kelas .trix-output digabung dengan kontainer --}}
+                        <div class="trix-output text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
                             @if ($karir->description)
-                                <p class="whitespace-pre-wrap">{{ $karir->description }}</p>
+                                {!! clean($karir->description) !!}
                             @else
                                 <p class="text-gray-500 dark:text-gray-400 italic">Tidak ada deskripsi.</p>
                             @endif
@@ -87,9 +89,11 @@
                     {{-- PERSYARATAN --}}
                     <section class="mt-8 pt-6 border-t dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Persyaratan</h4>
-                        <div class="text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
+
+                        {{-- KODE DIRAPIKAN: Kelas .trix-output digabung dengan kontainer --}}
+                        <div class="trix-output text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
                             @if ($karir->requirements)
-                                <p class="whitespace-pre-wrap">{{ $karir->requirements }}</p>
+                                {!! clean($karir->requirements) !!}
                             @else
                                 <p class="text-gray-500 dark:text-gray-400 italic">Tidak ada persyaratan.</p>
                             @endif
