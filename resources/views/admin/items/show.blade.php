@@ -19,44 +19,25 @@
     </x-slot>
 
     <div class="py-6 sm:py-8">
-        {{-- Mengurangi max-w menjadi 3xl agar lebih compact di tengah --}}
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8"> 
             
-            {{-- KARTU UTAMA --}}
             <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-xl overflow-hidden">
                 
-                {{-- AREA 1: GAMBAR (Dibatasi ukurannya) --}}
-                <div class="w-full max-h-96 flex items-center justify-center bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 p-8">
-                    @if ($item->image_url)
-                        {{-- Kunci: Membatasi tinggi (max-h-80) dan lebar (max-w-md) gambar --}}
+                @if ($item->image_url)
+                    <div class="w-full max-h-96 flex items-center justify-center bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 p-8">
                         <img src="{{ Storage::url($item->image_url) }}" alt="{{ $item->name }}" 
                              class="max-h-80 max-w-sm object-contain rounded-lg transition duration-300 hover:opacity-80 cursor-pointer"
                              onclick="window.open(this.src);">
-                    @else
-                        <div class="w-full h-48 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
-                            <i class="bi bi-image-fill text-5xl mb-3"></i> 
-                            <span class="text-lg font-medium block">Tidak Ada Gambar</span>
-                        </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
 
-                {{-- AREA 2: JUDUL & DETAIL UTAMA --}}
                 <div class="p-6 md:p-8">
-                    
-                    {{-- Judul Item --}}
-                    <h3 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 border-b pb-4 dark:border-gray-700">
-                        {{ $item->name }}
-                    </h3>
-
-                    {{-- DETAIL INFORMASI (Gaya List/Tabel Ramping) --}}
-                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
-                        
-                        {{-- Baris: Nama Item Lengkap (Sama dengan Judul, tapi untuk konsistensi struktur) --}}
+                    <dl class="rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
+                        {{-- Baris: Nama Item Lengkap --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nama Item Lengkap</dt>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0 font-medium">{{ $item->name }}</dd>
                         </div>
-                        
                         {{-- Baris: Tipe --}}
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Tipe</dt>
@@ -72,19 +53,16 @@
                                 @endif
                             </dd>
                         </div>
-
                         {{-- Baris: Kategori --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Kategori</dt>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0 font-medium">{{ $item->category->name ?? 'Tidak Berkategori' }}</dd>
                         </div>
-                        
                         {{-- Baris: Slug --}}
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Slug (URL Key)</dt>
                             <dd class="mt-1 text-sm font-mono text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0 break-all">{{ $item->slug }}</dd>
                         </div>
-                        
                         {{-- Baris: Dibuat/Diperbarui --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Dibuat / Diperbarui</dt>
@@ -93,26 +71,22 @@
                                 Diperbarui: {{ $item->updated_at->format('d M Y H:i') }}
                             </dd>
                         </div>
-
-                    </div>
+                    </dl>
                     {{-- AKHIR DETAIL INFORMASI --}}
 
-                    {{-- DESKRIPSI LENGKAP --}}
+                    {{-- DESKRIPSI LENGKAP (TRIX) --}}
                     <section class="mt-8 pt-6 border-t dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Deskripsi Lengkap</h4>
-                        <div class="text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
+                        <div class="trix-output text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
                             @if ($item->description)
-                                <p class="whitespace-pre-wrap">{{ $item->description }}</p>
+                                {!! clean($item->description) !!}
                             @else
                                 <p class="text-gray-500 dark:text-gray-400 italic">Tidak ada deskripsi lengkap untuk item ini.</p>
                             @endif
                         </div>
                     </section>
                 </div>
-                {{-- AKHIR BODY KARTU --}}
-
             </div>
-            {{-- AKHIR KARTU UTAMA --}}
         </div>
     </div>
 </x-app-layout>
