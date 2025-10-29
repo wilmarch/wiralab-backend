@@ -40,7 +40,7 @@
                             </x-slot>
                         </x-dropdown>
                     </div>
-                    {{-- === AKHIR DROPDOWN === --}}
+                    {{-- === AKHIR DROPDOWN PRODUK === --}}
 
                     <x-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
                         {{ __('Blog') }}
@@ -73,18 +73,42 @@
                             </x-slot>
                         </x-dropdown>
                     </div>
-                    {{-- === AKHIR DROPDOWN === --}}
-
+                    {{-- === AKHIR DROPDOWN PELATIHAN === --}}
+                    
                     <x-nav-link :href="route('admin.ekatalog.index')" :active="request()->routeIs('admin.ekatalog.index')">
                         {{ __('E-Katalog') }}
                     </x-nav-link>
 
-                    {{-- Link Karir (Placeholder) --}}
-                    <x-nav-link href="#" :active="request()->is('admin/careers*')">
-                        {{ __('Karir') }}
-                    </x-nav-link>
+                    {{-- === DROPDOWN KARIR === --}}
+                    @php
+                        $careerMenuActive = request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.careers.*');
+                    @endphp
+                    <div class="hidden sm:flex sm:items-center sm:ms-10">
+                        <x-dropdown align="left" width="60"> {{-- Dibuat sedikit lebih lebar (w-60) --}}
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
+                                            {{ $careerMenuActive 
+                                                ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' 
+                                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' 
+                                            }} 
+                                            focus:outline-none">
+                                    <div>{{ __('Karir') }}</div>
+                                    <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
+                                    {{ __('Pengaturan Karir') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
+                                    {{ __('Kelola Lowongan') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                    {{-- === AKHIR DROPDOWN KARIR === --}}
                     
-                    {{-- Link Kontak (Aktif) --}}
                     <x-nav-link :href="route('admin.kontak.index')" :active="request()->routeIs('admin.kontak.*')">
                         {{ __('Kontak') }}
                     </x-nav-link>
@@ -164,9 +188,12 @@
                  {{ __('E-Katalog') }}
              </x-responsive-nav-link>
 
-             {{-- Responsive Karir (Placeholder) --}}
-             <x-responsive-nav-link href="#" :active="request()->is('admin/careers*')">
-                 {{ __('Karir') }}
+             {{-- Responsive Karir (Dipisah) --}}
+             <x-responsive-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
+                {{ __('Kelola Lowongan') }}
+             </x-responsive-nav-link>
+             <x-responsive-nav-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
+                {{ __('Pengaturan Karir') }}
              </x-responsive-nav-link>
              
              {{-- Responsive Kontak (Aktif) --}}

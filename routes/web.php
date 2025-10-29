@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\EkatalogController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\TrainingRegistrationController;
+use App\Http\Controllers\Admin\JobCategoryController;
+use App\Http\Controllers\Admin\CareerController;
 
 Route::get('/', function () {
     return Redirect::route('login');
@@ -37,10 +39,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('pendaftar-pelatihan', TrainingRegistrationController::class);
 
 
-        // Route Karir (Biarkan ini dulu, akan kita kerjakan nanti)
-        Route::get('/careers', function () {
-            return view('admin.careers.index');
-        })->name('careers.index');
+        Route::resource('pengaturan-karir', JobCategoryController::class)->names('job-categories');
+        Route::post('karir-gform-update', [JobCategoryController::class, 'updateGform'])->name('careers.updateGform');
+        Route::resource('karir', CareerController::class)->names('careers');
     });
 });
 
