@@ -4,21 +4,25 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Training;
-use App\Models\SiteOption; 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; 
+use App\Models\SiteOption;
+use Illuminate\Http\Request; 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule; 
+use Illuminate\Validation\Rule;
 
 class TrainingController extends Controller
 {
-    public function index()
+    public function index(Request $request) 
     {
         $pdfSetting = SiteOption::firstOrCreate(
             ['key' => 'pelatihan_pdf_url'],
             ['value' => null] 
         );
-        $trainings = Training::latest()->paginate(10); 
+
+        $trainings = Training::filter($request->only(['search', 'is_active'])) // Panggil scope
+                             ->latest()
+                             ->paginate(10); 
+
         return view('admin.pelatihan.index', compact('pdfSetting', 'trainings'));
     }
 
@@ -65,38 +69,23 @@ class TrainingController extends Controller
                          ->with('success_training', 'Tipe Training baru berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    // PERBAIKAN: Ganti $training -> $pelatihan
     public function show(Training $pelatihan)
     {
         return redirect()->route('admin.pelatihan.edit', $pelatihan);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // PERBAIKAN: Ganti $training -> $pelatihan
     public function edit(Training $pelatihan)
     {
-        // PERBAIKAN: Kirim 'pelatihan' BUKAN 'training'
         return view('admin.pelatihan.edit', compact('pelatihan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    // PERBAIKAN: Ganti $training -> $pelatihan
     public function update(Request $request, Training $pelatihan)
     {
         $validatedData = $request->validate([
-            // PERBAIKAN: ignore $pelatihan->id
             'name' => ['required', 'string', 'max:255', Rule::unique('trainings')->ignore($pelatihan->id)],
             'is_active' => 'nullable|boolean',
         ]);
 
-        // PERBAIKAN: Ganti $training -> $pelatihan
         if ($pelatihan->name !== $validatedData['name']) {
             $validatedData['slug'] = Str::slug($validatedData['name']);
             $originalSlug = $validatedData['slug'];
@@ -107,19 +96,15 @@ class TrainingController extends Controller
         }
 
         $validatedData['is_active'] = $request->has('is_active');
-        $pelatihan->update($validatedData); // PERBAIKAN: Ganti $training -> $pelatihan
+        $pelatihan->update($validatedData);
 
         return redirect()->route('admin.pelatihan.index')
                          ->with('success_training', 'Tipe Training berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    // PERBAIKAN: Ganti $training -> $pelatihan
     public function destroy(Training $pelatihan)
     {
-        $pelatihan->delete(); // PERBAIKAN: Ganti $training -> $pelatihan
+        $pelatihan->delete();
         return redirect()->route('admin.pelatihan.index')
                          ->with('success_training', 'Tipe Training berhasil dihapus!');
     }

@@ -1,11 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Daftar Pendaftar Pelatihan') }}
-            </h2>
-            {{-- Tidak ada tombol "Tambah" untuk pendaftar --}}
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Daftar Pendaftar Pelatihan') }}
+        </h2>
     </x-slot>
 
     <div class="py-6 sm:py-12">
@@ -20,9 +17,13 @@
                         </div>
                     @endif
 
+                    {{-- 1. PANGGIL FORM FILTER --}}
+                    {{-- $trainings dikirim dari controller --}}
+                    @include('admin.pendaftar-pelatihan._filter-form', ['trainings' => $trainings])
+
                     {{-- Kontainer Tabel Responsif --}}
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                        <table class="min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse">
+                        <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400 border-collapse">
                             
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                                 <tr>
@@ -41,10 +42,9 @@
                                         <p class="text-xs text-gray-500 font-normal mt-1">{{ $reg->institution }}</p>
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ $reg->training->name ?? 'Tipe Dihapus' }} {{-- Tampilkan Nama Training --}}
+                                        {{ $reg->training->name ?? 'Tipe Dihapus' }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{-- Badge Status --}}
                                         @if ($reg->is_contacted)
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                                 Sudah Dihubungi
@@ -56,24 +56,31 @@
                                         @endif
                                     </td>
                                     
-                                    {{-- Kolom Aksi --}}
                                     <td class="px-6 py-4 flex justify-end space-x-2">
-                                        
-                                        {{-- Tombol DETAIL (Fokus Utama Aksi) --}}
                                         <a href="{{ route('admin.pendaftar-pelatihan.show', $reg) }}" 
                                            title="Lihat Detail Pendaftar"
                                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition duration-150">
                                             <i class="bi bi-eye-fill me-1"></i> Detail
                                         </a>
                                         
-                                        {{-- Tombol Delete Dihilangkan --}}
-                                        
+                                        <form action="{{ route('admin.pendaftar-pelatihan.destroy', $reg) }}" 
+                                              method="POST" 
+                                              class="inline-flex items-center" 
+                                              onsubmit="return confirm('Yakin hapus data pendaftar ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    title="Hapus Data"
+                                                    class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition duration-150">
+                                                <i class="bi bi-trash3 me-1"></i> Hapus
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr class="bg-white dark:bg-gray-800">
                                      <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 italic">
-                                        Tidak ada data pendaftar.
+                                        Tidak ada data pendaftar yang cocok dengan filter.
                                     </td>
                                 </tr>
                                 @endforelse
@@ -81,9 +88,9 @@
                         </table>
                     </div>
 
-                    {{-- Pagination Links --}}
+                    {{-- 2. PAGINATION DENGAN .appends() --}}
                     <div class="mt-8 flex justify-end">
-                        {{ $registrations->links() }}
+                        {!! $registrations->appends(request()->query())->links() !!}
                     </div>
 
                 </div>

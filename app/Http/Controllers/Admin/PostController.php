@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post; 
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
@@ -12,9 +12,12 @@ use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
 
-    public function index()
+    public function index(Request $request) 
     {
-        $posts = Post::latest()->paginate(15);
+        $posts = Post::filter($request->only(['search', 'post_type', 'is_published']))
+                       ->latest()
+                       ->paginate(15);
+
         return view('admin.blog.index', compact('posts'));
     }
 
@@ -53,22 +56,16 @@ class PostController extends Controller
                          ->with('success', 'Postingan baru berhasil ditambahkan!');
     }
 
-    // PERBAIKAN: Ganti $post menjadi $blog
     public function show(Post $blog)
     {
         return view('admin.blog.show', compact('blog'));
     }
 
-    // PERBAIKAN: Ganti $post menjadi $blog
     public function edit(Post $blog)
     {
         return view('admin.blog.edit', compact('blog'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    // PERBAIKAN: Ganti $post menjadi $blog
     public function update(Request $request, Post $blog)
     {
         $validatedData = $request->validate([
@@ -104,7 +101,6 @@ class PostController extends Controller
                          ->with('success', 'Postingan berhasil diperbarui!');
     }
 
-    // PERBAIKAN: Ganti $post menjadi $blog
     public function destroy(Post $blog)
     {
         if ($blog->image_url && Storage::disk('public')->exists($blog->image_url)) {

@@ -22,22 +22,20 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                {{-- KOLOM KIRI: UPLOAD PDF (Desain Diperbagus) --}}
+                {{-- KOLOM KIRI: UPLOAD PDF (Compact) --}}
                 <div class="lg:col-span-1">
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-xl h-full">
-                        <div class="p-6 text-gray-900 dark:text-gray-100">
-                            <h3 class="text-xl font-semibold mb-4 border-b pb-2 dark:border-gray-700">
+                        <div class="p-4 text-gray-900 dark:text-gray-100">
+                            <h3 class="text-lg font-semibold mb-3 border-b pb-2 dark:border-gray-700">
                                 <i class="bi bi-file-earmark-pdf-fill me-2 text-red-500"></i>Brosur Pelatihan
                             </h3>
 
-                            {{-- Area Pratinjau File --}}
-                            <div class="mb-6 p-4 rounded-lg border border-dashed {{ $pdfSetting->value ? 'border-green-400 dark:border-green-600' : 'border-gray-400 dark:border-gray-500' }} bg-gray-50 dark:bg-gray-700 transition duration-300">
+                            <div class="mb-4 p-3 rounded-lg border border-dashed {{ $pdfSetting->value ? 'border-green-400 dark:border-green-600' : 'border-gray-400 dark:border-gray-500' }} bg-gray-50 dark:bg-gray-700 transition duration-300">
                                 @if ($pdfSetting->value)
-                                    {{-- File Sudah Ada --}}
-                                    <div class="flex items-center space-x-3">
-                                        <i class="bi bi-file-earmark-check-fill text-3xl text-green-600 dark:text-green-400"></i>
+                                    <div class="flex items-center space-x-2">
+                                        <i class="bi bi-file-earmark-check-fill text-2xl text-green-600 dark:text-green-400"></i>
                                         <div>
-                                            <p class="text-sm font-semibold text-gray-800 dark:text-gray-100">File Aktif Tersedia</p>
+                                            <p class="text-xs font-semibold text-gray-800 dark:text-gray-100">File Aktif Tersedia</p>
                                             <a href="{{ Storage::url($pdfSetting->value) }}" target="_blank" 
                                                class="text-xs font-mono text-indigo-600 dark:text-indigo-400 break-all hover:underline"
                                                title="Klik untuk download">
@@ -46,21 +44,19 @@
                                         </div>
                                     </div>
                                 @else
-                                    {{-- File Belum Ada --}}
-                                    <div class="flex items-center justify-center space-x-3 text-gray-500 dark:text-gray-400">
-                                        <i class="bi bi-file-earmark-x-fill text-3xl"></i>
-                                        <span class="text-sm font-medium">Belum ada Brosur PDF yang di-upload.</span>
+                                    <div class="flex items-center justify-center space-x-2 text-gray-500 dark:text-gray-400">
+                                        <i class="bi bi-file-earmark-x-fill text-2xl"></i>
+                                        <span class="text-xs font-medium">Belum ada Brosur PDF di-upload.</span>
                                     </div>
                                 @endif
                             </div>
 
-                            {{-- Form Upload --}}
                             <form action="{{ route('admin.pelatihan.updatePdf') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <div class="space-y-3">
-                                    <x-input-label for="file_pelatihan" :value="__('Pilih File PDF Baru')" />
+                                <div class="space-y-2">
+                                    <x-input-label for="file_pelatihan" :value="__('Pilih File PDF Baru')" class="text-sm mb-1" />
                                     <input id="file_pelatihan" name="file_pelatihan" type="file" accept=".pdf" required
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900 dark:file:text-indigo-300 dark:hover:file:bg-indigo-800 mt-1 cursor-pointer"/>
+                                           class="block w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900 dark:file:text-indigo-300 dark:hover:file:bg-indigo-800 cursor-pointer"/>
                                     <x-input-error :messages="$errors->get('file_pelatihan')" class="mt-2" />
                                 </div>
                                 <x-primary-button class="mt-4 w-full justify-center bg-green-600 hover:bg-green-700 active:bg-green-700 focus:ring-green-500">
@@ -84,6 +80,9 @@
                                 </a>
                             </div>
 
+                            {{-- 1. PANGGIL FORM FILTER --}}
+                            @include('admin.pelatihan._filter-form')
+
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
@@ -95,7 +94,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                         @forelse ($trainings as $training)
-                                        <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-150 ease-in-out">
+                                        <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $training->name }}</th>
                                             <td class="px-6 py-4">
                                                 @if ($training->is_active)
@@ -109,14 +108,11 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 flex justify-end space-x-2">
-                                                {{-- Tombol Edit --}}
-                                                <a href="{{ route('admin.pelatihan.edit', $training->slug) }}" title="Edit Tipe" 
+                                                <a href="{{ route('admin.pelatihan.edit', $training) }}" title="Edit Tipe" 
                                                    class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition duration-150">
                                                     <i class="bi bi-pencil-square me-1"></i> Edit
                                                 </a>
-                                                
-                                                {{-- Tombol Delete --}}
-                                                <form action="{{ route('admin.pelatihan.destroy', $training->slug) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus tipe training ini?');">
+                                                <form action="{{ route('admin.pelatihan.destroy', $training) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus tipe training ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" title="Hapus Tipe" 
@@ -128,14 +124,15 @@
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td colspan="3" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 italic">Belum ada tipe training.</td>
+                                            <td colspan="3" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 italic">Tidak ada tipe training yang cocok dengan filter.</td>
                                         </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div class="mt-8 flex justify-end">
-                                {{ $trainings->links() }}
+                                {{-- 2. TAMBAHKAN .appends() --}}
+                                {!! $trainings->appends(request()->query())->links() !!}
                             </div>
                         </div>
                     </div>

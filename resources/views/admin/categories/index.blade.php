@@ -26,17 +26,20 @@
                         </div>
                     @endif
 
+                    {{-- PANGGIL FORM FILTER --}}
+                    @include('admin.categories._filter-form')
+
                     {{-- Kontainer Tabel Responsif --}}
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                        <table class="min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse">
+                        <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400 border-collapse">
                             
                             {{-- Header Tabel --}}
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 font-semibold w-1/3">Nama Kategori</th>
-                                    <th scope="col" class="px-6 py-3 font-semibold w-1/4">Tipe</th>
-                                    <th scope="col" class="px-6 py-3 font-semibold w-1/4">Slug (URL)</th>
-                                    <th scope="col" class="px-6 py-3 font-semibold w-1/5">Aksi</th> 
+                                    <th scope="col" class="px-6 py-3 font-bold w-1/3">Nama Kategori</th>
+                                    <th scope="col" class="px-6 py-3 font-bold w-1/4">Tipe</th>
+                                    <th scope="col" class="px-6 py-3 font-bold w-1/4">Slug (URL)</th>
+                                    <th scope="col" class="px-6 py-3 font-bold w-1/5">Aksi</th> 
                                 </tr>
                             </thead>
                             
@@ -63,24 +66,21 @@
                                         {{ $category->slug }}
                                     </td>
                                     
-                                    {{-- Kolom Aksi (Tambah Detail Button) --}}
+                                    {{-- Kolom Aksi (Icon Button with Text) --}}
                                     <td class="px-6 py-4 flex justify-end space-x-2"> 
                                         
-                                        {{-- Tombol DETAIL (Baru Ditambahkan) --}}
                                         <a href="{{ route('admin.categories.show', $category) }}" 
                                            title="Lihat Detail"
                                            class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-lg text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 shadow-sm transition duration-150">
                                             <i class="bi bi-eye-fill me-1"></i> Detail
                                         </a>
 
-                                        {{-- Tombol Edit --}}
                                         <a href="{{ route('admin.categories.edit', $category) }}" 
                                            title="Edit Kategori"
                                            class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition duration-150">
                                             <i class="bi bi-pencil-square me-1"></i> Edit
                                         </a>
                                         
-                                        {{-- Tombol Delete --}}
                                         <form action="{{ route('admin.categories.destroy', $category) }}" 
                                               method="POST" 
                                               class="inline-flex items-center" 
@@ -98,7 +98,7 @@
                                 @empty
                                 <tr class="bg-white dark:bg-gray-800">
                                      <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 text-base italic">
-                                        Belum ada data kategori. Silakan klik "Tambah Kategori" di atas.
+                                        Tidak ada data kategori. Silakan klik "Tambah Kategori" di atas.
                                     </td>
                                 </tr>
                                 @endforelse
@@ -106,9 +106,10 @@
                         </table>
                     </div>
 
-                    {{-- Pagination Links --}}
+                    {{-- Pagination Links (PENTING!) --}}
                     <div class="mt-8 flex justify-end">
-                        {{ $categories->links() }}
+                        {{-- Tambahkan appends() agar filter tetap ada saat pindah halaman --}}
+                        {!! $categories->appends(request()->query())->links() !!}
                     </div>
 
                 </div>

@@ -4,39 +4,53 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Post extends Model
 {
     use HasFactory;
 
-    /**
-     * Atribut yang boleh diisi secara massal.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'title',
         'slug',
         'content',
-        'post_type', // 'artikel' atau 'berita'
+        'post_type', 
         'image_url',
         'is_published',
     ];
 
-    /**
-     * Tipe data atribut yang harus di-casting.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'is_published' => 'boolean', // Pastikan kolom ini diperlakukan sebagai true/false
+        'is_published' => 'boolean',
     ];
 
-    /**
-     * Menggunakan 'slug' untuk pencarian route, bukan 'id'.
-     */
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Scope a query to only include posts based on filters.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  array  $filters (Contoh: ['search' => 'judul', 'post_type' => 'artikel', 'is_published' => '1'])
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilter(Builder $query, array $filters): void
+    {
+        // Filter berdasarkan Search (Judul Postingan)
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            return $query->where('title', 'like', '%' . $search . '%');
+        });
+
+        // Filter berdasarkan Tipe Postingan (artikel/berita)
+        $query->when($filters['post_type'] ?? false, function ($query, $type) {
+            return $query->where('post_type', $type);
+        });
+        
+        // Filter berdasarkan Status (Published/Draft)
+        $query->when(isset($filters['is_published']) && $filters['is_published'] !== '', function ($query) use ($filters) {
+             // Cek '0' (Draft) atau '1' (Published)
+             return $query->where('is_published', $filters['is_published']);
+        });
     }
 }
