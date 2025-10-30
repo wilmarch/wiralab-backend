@@ -103,11 +103,12 @@
                             </x-slot>
 
                             <x-slot name="content">
+                                 <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
+                                    {{ __('Pengaturan Karir') }}
+                                </x-dropdown-link>
+                                
                                 <x-dropdown-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                                     {{ __('Kelola Lowongan') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
-                                    {{ __('Pengaturan Karir') }}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
