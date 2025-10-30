@@ -7,12 +7,6 @@
                          <img src="{{ asset('images/wiralab-logo.png') }}" alt="Wiralab Logo" class="block h-12 w-auto"> {{-- Logo Wiralab --}}
                     </a>
                 </div>
-
-                {{-- 
-                  PERUBAHAN DI SINI: 
-                  'space-x-8' diubah menjadi 'space-x-4' agar lebih rapat.
-                  Anda juga bisa mencoba 'space-x-2' jika masih nabrak.
-                --}}
                 <div class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
@@ -106,7 +100,7 @@
                                  <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
                                     {{ __('Pengaturan Karir') }}
                                 </x-dropdown-link>
-                                
+
                                 <x-dropdown-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                                     {{ __('Kelola Lowongan') }}
                                 </x-dropdown-link>

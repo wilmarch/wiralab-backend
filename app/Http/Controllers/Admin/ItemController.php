@@ -15,16 +15,13 @@ class ItemController extends Controller
 
     public function index(Request $request) 
     {
-        //Ambil data untuk dropdown filter
         $categories = Category::orderBy('name')->get();
 
-        //Ambil data item, panggil scope filter()
         $items = Item::with('category')
-                     ->filter($request->only(['search', 'type', 'category_id'])) // Panggil scope
+                     ->filter($request->only(['search', 'type', 'category_id'])) 
                      ->latest()
                      ->paginate(15);
 
-        // Kirim items DAN categories ke view
         return view('admin.items.index', compact('items', 'categories'));
     }
 
@@ -38,7 +35,7 @@ class ItemController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string', 
             'type' => ['required', Rule::in(['product', 'application'])],
             'category_id' => 'required|exists:categories,id',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -79,7 +76,7 @@ class ItemController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string', 
             'type' => ['required', Rule::in(['product', 'application'])],
             'category_id' => 'required|exists:categories,id',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
