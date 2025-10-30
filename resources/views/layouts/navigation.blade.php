@@ -8,7 +8,12 @@
                     </a>
                 </div>
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                {{-- 
+                  PERUBAHAN DI SINI: 
+                  'space-x-8' diubah menjadi 'space-x-4' agar lebih rapat.
+                  Anda juga bisa mencoba 'space-x-2' jika masih nabrak.
+                --}}
+                <div class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
@@ -17,7 +22,7 @@
                     @php
                         $productMenuActive = request()->routeIs('admin.categories.*') || request()->routeIs('admin.items.*');
                     @endphp
-                    <div class="hidden sm:flex sm:items-center sm:ms-10">
+                    <div class="hidden sm:flex sm:items-center"> {{-- Hapus 'sm:ms-10' dari sini karena 'space-x-4' sudah mengatur jarak --}}
                         <x-dropdown align="left" width="56">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
@@ -50,8 +55,8 @@
                     @php
                         $trainingMenuActive = request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.pendaftar-pelatihan.*');
                     @endphp
-                    <div class="hidden sm:flex sm:items-center sm:ms-10">
-                        <x-dropdown align="left" width="60"> {{-- Dibuat sedikit lebih lebar (w-60) --}}
+                    <div class="hidden sm:flex sm:items-center">
+                        <x-dropdown align="left" width="60">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
                                             {{ $trainingMenuActive 
@@ -83,8 +88,8 @@
                     @php
                         $careerMenuActive = request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.careers.*');
                     @endphp
-                    <div class="hidden sm:flex sm:items-center sm:ms-10">
-                        <x-dropdown align="left" width="60"> {{-- Dibuat sedikit lebih lebar (w-60) --}}
+                    <div class="hidden sm:flex sm:items-center">
+                        <x-dropdown align="left" width="60">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
                                             {{ $careerMenuActive 
@@ -98,11 +103,11 @@
                             </x-slot>
 
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
-                                    {{ __('Pengaturan Karir') }}
-                                </x-dropdown-link>
                                 <x-dropdown-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                                     {{ __('Kelola Lowongan') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
+                                    {{ __('Pengaturan Karir') }}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
@@ -128,11 +133,13 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
+
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </div>
                         </button>
                     </x-slot>
+
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
@@ -214,9 +221,9 @@
                 </x-responsive-nav-link>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
                         {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                    </x-dropdown-link>
                 </form>
             </div>
         </div>
