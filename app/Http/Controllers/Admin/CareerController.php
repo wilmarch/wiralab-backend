@@ -4,37 +4,58 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Career;
-use App\Models\JobCategory; 
-use Illuminate\Http\Request; 
+use App\Models\JobCategory;
+use App\Models\Company;
+use App\Models\Location;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class CareerController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
+        // 1. Ambil data untuk dropdown filter
         $jobCategories = JobCategory::orderBy('name')->get();
+        $companies = Company::orderBy('name')->get(); 
+        $locations = Location::orderBy('name')->get();
 
-        $careers = Career::with('jobCategory')
-                         ->filter($request->only(['search', 'job_category_id', 'is_active'])) // Panggil scope
+        // 2. Ambil data lowongan, panggil scope filter (kita akan update scope-nya nanti)
+        $careers = Career::with(['jobCategory', 'company', 'location'])
+                         ->filter($request->only(['search', 'job_category_id', 'company_id', 'location_id', 'is_active'])) 
                          ->latest()
                          ->paginate(15);
         
-        return view('admin.careers.index', compact('careers', 'jobCategories'));
+        // 3. Kirim semua data ke view
+        return view('admin.careers.index', compact('careers', 'jobCategories', 'companies', 'locations'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
         $jobCategories = JobCategory::orderBy('name')->get();
+        $companies = Company::orderBy('name')->get();
+        $locations = Location::orderBy('name')->get();
         $minDate = now()->addDay()->format('Y-m-d'); 
-        return view('admin.careers.create', compact('jobCategories', 'minDate'));
+        
+        return view('admin.careers.create', compact('jobCategories', 'companies', 'locations', 'minDate'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'job_category_id' => 'required|exists:job_categories,id',
+            'company_id' => 'required|exists:companies,id',
+            'location_id' => 'required|exists:locations,id',
             'description' => 'required|string',
             'requirements' => 'required|string', 
             'closing_date' => 'required|date|after:today', 
@@ -47,23 +68,32 @@ class CareerController extends Controller
         while (Career::where('slug', $validatedData['slug'])->exists()) {
             $validatedData['slug'] = $originalSlug . '-' . $count++;
         }
-
         $validatedData['is_active'] = $request->has('is_active');
+
         Career::create($validatedData);
 
         return redirect()->route('admin.careers.index')
                          ->with('success', 'Lowongan baru berhasil ditambahkan!');
     }
 
-    public function show(Career $karir) 
+    /**
+     * Display the specified resource.
+     */
+    public function show(Career $karir)
     {
-        $karir->load('jobCategory'); 
+        // Eager load semua relasi
+        $karir->load(['jobCategory', 'company', 'location']); 
         return view('admin.careers.show', compact('karir'));
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(Career $karir)
     {
         $jobCategories = JobCategory::orderBy('name')->get();
+        $companies = Company::orderBy('name')->get();
+        $locations = Location::orderBy('name')->get();
         
         $minDate = now()->addDay()->format('Y-m-d');
         if ($karir->closing_date && $karir->closing_date->isAfter(now())) {
@@ -72,15 +102,19 @@ class CareerController extends Controller
              $minDate = $karir->closing_date ? $karir->closing_date->format('Y-m-d') : $minDate;
         }
         
-        return view('admin.careers.edit', compact('karir', 'jobCategories', 'minDate'));
+        return view('admin.careers.edit', compact('karir', 'jobCategories', 'companies', 'locations', 'minDate'));
     }
 
-
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, Career $karir)
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'job_category_id' => 'required|exists:job_categories,id',
+            'company_id' => 'required|exists:companies,id',
+            'location_id' => 'required|exists:locations,id',
             'description' => 'required|string',
             'requirements' => 'required|string',
             'closing_date' => 'required|date|after:today', 
@@ -103,7 +137,10 @@ class CareerController extends Controller
                          ->with('success', 'Lowongan berhasil diperbarui!');
     }
 
-    public function destroy(Career $karir) 
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Career $karir)
     {
         $karir->delete();
         return redirect()->route('admin.careers.index')

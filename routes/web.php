@@ -14,74 +14,76 @@ use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\TrainingRegistrationController;
 use App\Http\Controllers\Admin\JobCategoryController;
 use App\Http\Controllers\Admin\CareerController;
-use App\Http\Controllers\Admin\UserController; 
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ContactSettingsController;
+use App\Http\Controllers\Admin\PageSettingController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\LocationController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
-// Route awal, redirect ke login
 Route::get('/', function () {
     return Redirect::route('login');
 });
 
-// Route dashboard bawaan Breeze
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// --- Grup untuk route yang memerlukan login (User Biasa & Admin) ---
 Route::middleware('auth')->group(function () {
     
-    // Route profile bawaan Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     
-    // === GRUP ADMIN YANG DIAMANKAN ===
-    // Hanya user yang login DAN memiliki role 'superadmin' ATAU 'admin' yang bisa masuk
+    // === GRUP ADMIN (Bisa diakses Superadmin & Admin) ===
     Route::middleware(['role:superadmin,admin'])
          ->prefix('admin')
          ->name('admin.')
          ->group(function () {
 
-        // CRUD Kategori
+        // --- Modul Konten ---
         Route::resource('categories', CategoryController::class);
-        
-        // CRUD Item (Produk/Aplikasi)
         Route::resource('items', ItemController::class);
-        
-        // CRUD Blog
         Route::resource('blog', PostController::class);
         
-        // E-Katalog
         Route::get('/e-katalog', [EkatalogController::class, 'index'])->name('ekatalog.index');
         Route::post('/e-katalog/update', [EkatalogController::class, 'update'])->name('ekatalog.update');
         
-        // Kontak (Pesan Masuk) - Dibatasi
-        Route::resource('kontak', MessageController::class)->only([
-            'index', 'show', 'destroy'
-        ]);
+        Route::resource('kontak', MessageController::class)->only(['index', 'show', 'destroy']);
         
-        // Pelatihan (Pengaturan)
         Route::resource('pelatihan', TrainingController::class); 
         Route::post('pelatihan-pdf-update', [TrainingController::class, 'updatePdf'])->name('pelatihan.updatePdf');
+        Route::resource('pendaftar-pelatihan', TrainingRegistrationController::class)->only(['index', 'show', 'destroy']);
         
-        // Pendaftar Pelatihan - Dibatasi
-        Route::resource('pendaftar-pelatihan', TrainingRegistrationController::class)->only([
-            'index', 'show', 'destroy'
-        ]);
-        
-        // Karir (Pengaturan)
         Route::resource('pengaturan-karir', JobCategoryController::class)->names('job-categories');
         Route::post('karir-gform-update', [JobCategoryController::class, 'updateGform'])->name('careers.updateGform');
-        
-        // Karir (Lowongan)
         Route::resource('karir', CareerController::class)->names('careers');
 
-        // --- MANAJEMEN USER (Hanya Superadmin) ---
-        // Route ini HANYA bisa diakses oleh 'superadmin'
-        Route::middleware(['role:superadmin'])
-             ->resource('users', UserController::class);
+        // --- Modul Pengaturan (Dipindahkan ke sini) ---
+        Route::get('pengaturan-kontak', [ContactSettingsController::class, 'index'])->name('contact-settings.index');
+        Route::post('pengaturan-kontak', [ContactSettingsController::class, 'update'])->name('contact-settings.update');
+        
+        Route::get('pengaturan-halaman', [PageSettingController::class, 'index'])->name('page-settings.index');
+        Route::get('pengaturan-halaman/{page_setting:slug}/edit', [PageSettingController::class, 'edit'])->name('page-settings.edit');
+        Route::patch('pengaturan-halaman/{page_setting:slug}', [PageSettingController::class, 'update'])->name('page-settings.update');
 
+        Route::resource('perusahaan', CompanyController::class)->names('companies');
+        Route::resource('lokasi', LocationController::class)->names('locations');
+
+        
+        // --- GRUP KHUSUS SUPERADMIN (HANYA Manajemen User) ---
+        Route::middleware(['role:superadmin'])
+             ->group(function () {
+            
+            Route::resource('users', UserController::class);
+
+        });
     });
 });
 

@@ -8,7 +8,6 @@
                     </a>
                 </div>
 
-                {{-- REVISI: Menggunakan 'lg:flex' agar tidak nabrak di tablet --}}
                 <div class="hidden space-x-4 lg:-my-px lg:ms-10 lg:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
@@ -68,8 +67,13 @@
                         {{ __('E-Katalog') }}
                     </x-nav-link>
 
-                    {{-- === DROPDOWN KARIR === --}}
-                    @php $careerMenuActive = request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.careers.*'); @endphp
+                    {{-- === DROPDOWN KARIR (REVISI) === --}}
+                    @php 
+                        $careerMenuActive = request()->routeIs('admin.careers.*') ||
+                                          request()->routeIs('admin.job-categories.*') || 
+                                          request()->routeIs('admin.companies.*') ||
+                                          request()->routeIs('admin.locations.*'); // <-- Tambah Lokasi
+                    @endphp
                     <div class="hidden lg:flex lg:items-center">
                         <x-dropdown align="left" width="60">
                             <x-slot name="trigger">
@@ -85,42 +89,48 @@
                                     {{ __('Kelola Lowongan') }}
                                 </x-dropdown-link>
                                 <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
-                                    {{ __('Pengaturan Karir') }}
+                                    {{ __('Kelola Kategori Karir') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.companies.index')" :active="request()->routeIs('admin.companies.*')">
+                                    {{ __('Kelola Perusahaan') }}
+                                </x-dropdown-link>
+                                {{-- ↓↓↓ TAMBAHKAN LINK INI ↓↓↓ --}}
+                                <x-dropdown-link :href="route('admin.locations.index')" :active="request()->routeIs('admin.locations.*')">
+                                    {{ __('Kelola Lokasi Karir') }}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
                     
                     <x-nav-link :href="route('admin.kontak.index')" :active="request()->routeIs('admin.kontak.*')">
-                        {{ __('Kontak') }}
+                        {{ __('Pesan Masuk (Kontak)') }}
                     </x-nav-link>
                     
-                    {{-- === DROPDOWN MANAJEMEN USER (Hanya Superadmin) === --}}
+                    {{-- === DROPDOWN PENGATURAN (HANYA Manajemen User) === --}}
                     @if (Auth::user()->role == 'superadmin')
+                        @php 
+                            $settingsMenuActive = request()->routeIs('admin.users.*');
+                        @endphp
                         <div class="hidden lg:flex lg:items-center">
-                            <x-dropdown align="left" width="48">
+                            <x-dropdown align="left" width="60">
                                 <x-slot name="trigger">
                                     <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
-                                                {{ request()->routeIs('admin.users.*') 
-                                                    ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' 
-                                                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' 
-                                                }} 
+                                                {{ $settingsMenuActive ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }} 
                                                 focus:outline-none">
-                                        <div><i class="bi bi-people-fill"></i> User</div>
+                                        <div><i class="bi bi-gear-fill me-1"></i> Pengaturan</div>
                                         <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
                                     </button>
                                 </x-slot>
                                 <x-slot name="content">
-                                    <x-dropdown-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
-                                        {{ __('Daftar User') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link :href="route('admin.users.create')" :active="request()->routeIs('admin.users.create')">
-                                        {{ __('Tambah User Baru') }}
+                                    <x-dropdown-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                                        {{ __('Manajemen User') }}
                                     </x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
                         </div>
                     @endif
+                    {{-- === AKHIR DROPDOWN PENGATURAN === --}}
+                    
                 </div>
             </div>
 
@@ -155,7 +165,6 @@
                 </x-dropdown>
             </div>
 
-            {{-- REVISI: Tampilkan hamburger di bawah 'lg' (1024px) --}}
             <div class="-me-2 flex items-center lg:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -167,14 +176,13 @@
         </div>
     </div>
 
-    {{-- REVISI: Sembunyikan menu ini di atas 'lg' (1024px) --}}
     <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-             {{-- Responsive Admin Links (Dipisah agar mudah di-tap) --}}
+             {{-- Responsive Admin Links --}}
              <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
                  {{ __('Kelola Kategori') }}
              </x-responsive-nav-link>
@@ -196,30 +204,35 @@
              <x-responsive-nav-link :href="route('admin.ekatalog.index')" :active="request()->routeIs('admin.ekatalog.index')">
                  {{ __('E-Katalog') }}
              </x-responsive-nav-link>
-
+             
+             {{-- Responsive Karir (Revisi) --}}
              <x-responsive-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                 {{ __('Kelola Lowongan') }}
              </x-responsive-nav-link>
              <x-responsive-nav-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
-                {{ __('Pengaturan Karir') }}
+                {{ __('Kelola Kategori Karir') }}
              </x-responsive-nav-link>
+             <x-responsive-nav-link :href="route('admin.companies.index')" :active="request()->routeIs('admin.companies.*')">
+                {{ __('Kelola Perusahaan') }}
+            </x-responsive-nav-link>
+            {{-- ↓↓↓ TAMBAHKAN LINK INI ↓↓↓ --}}
+            <x-responsive-nav-link :href="route('admin.locations.index')" :active="request()->routeIs('admin.locations.*')">
+                {{ __('Kelola Lokasi Karir') }}
+            </x-responsive-nav-link>
              
              <x-responsive-nav-link :href="route('admin.kontak.index')" :active="request()->routeIs('admin.kontak.*')">
-                 {{ __('Kontak') }}
+                 {{ __('Pesan Masuk (Kontak)') }}
              </x-responsive-nav-link>
 
-            {{-- Responsive Manajemen User (Hanya Superadmin) --}}
+            {{-- Responsive Pengaturan (HANYA Manajemen User) --}}
             @if (Auth::user()->role == 'superadmin')
                 <div class="pt-2 pb-1 border-t border-gray-200 dark:border-gray-600">
                     <div class="px-4">
-                        <div class="font-medium text-base text-gray-800 dark:text-gray-200">Manajemen User</div>
+                        <div class="font-medium text-base text-gray-800 dark:text-gray-200">Pengaturan</div>
                     </div>
                      <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
-                         {{ __('Daftar User') }}
+                         {{ __('Manajemen User') }}
                      </x-responsive-nav-link>
-                     <x-responsive-nav-link :href="route('admin.users.create')" :active="request()->routeIs('admin.users.create')">
-                        {{ __('Tambah User Baru') }}
-                    </x-responsive-nav-link>
                 </div>
             @endif
         </div>

@@ -1,3 +1,5 @@
+{{-- resources/views/admin/careers/_filter-form.blade.php --}}
+
 <div class="mb-6 bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
     <form action="{{ route('admin.careers.index') }}" method="GET" class="space-y-4">
         
@@ -7,14 +9,14 @@
             <x-text-input id="search" class="block mt-1 w-full" type="text" name="search" :value="request('search')" placeholder="Ketik judul..."/>
         </div>
 
-        {{-- Baris Kedua: Filter Dropdown --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{-- Baris Kedua: Filter Dropdown (Grid 4 kolom) --}}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            
             {{-- Filter Kategori Pekerjaan --}}
             <div>
-                <x-input-label for="job_category_id" :value="__('Filter Kategori Pekerjaan')" />
+                <x-input-label for="job_category_id" :value="__('Kategori Pekerjaan')" />
                 <select name="job_category_id" id="job_category_id" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
                     <option value="">Semua Kategori</option>
-                    {{-- Loop data $jobCategories yang dikirim dari controller --}}
                     @foreach ($jobCategories as $category)
                         <option value="{{ $category->id }}" {{ request('job_category_id') == $category->id ? 'selected' : '' }}>
                             {{ $category->name }}
@@ -23,9 +25,35 @@
                 </select>
             </div>
 
+            {{-- Filter Perusahaan (BARU) --}}
+            <div>
+                <x-input-label for="company_id" :value="__('Perusahaan')" />
+                <select name="company_id" id="company_id" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
+                    <option value="">Semua Perusahaan</option>
+                    @foreach ($companies as $company)
+                        <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                            {{ $company->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Filter Lokasi (BARU) --}}
+            <div>
+                <x-input-label for="location_id" :value="__('Lokasi')" />
+                <select name="location_id" id="location_id" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
+                    <option value="">Semua Lokasi</option>
+                    @foreach ($locations as $location)
+                        <option value="{{ $location->id }}" {{ request('location_id') == $location->id ? 'selected' : '' }}>
+                            {{ $location->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
             {{-- Filter Status --}}
             <div>
-                <x-input-label for="is_active" :value="__('Filter Status')" />
+                <x-input-label for="is_active" :value="__('Status')" />
                 <select name="is_active" id="is_active" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
                     <option value="">Semua Status</option>
                     <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Aktif</option>

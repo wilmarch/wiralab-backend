@@ -23,13 +23,19 @@
                     @endif
 
                     {{-- 1. PANGGIL FORM FILTER --}}
-                    @include('admin.careers._filter-form', ['jobCategories' => $jobCategories])
+                    @include('admin.careers._filter-form', [
+                        'jobCategories' => $jobCategories,
+                        'companies' => $companies,
+                        'locations' => $locations
+                    ])
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                         <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400 border-collapse">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 font-bold">Judul Pekerjaan</th>
+                                    <th scope="col" class="px-6 py-3 font-bold">Perusahaan</th>
+                                    <th scope="col" class="px-6 py-3 font-bold">Lokasi</th>
                                     <th scope="col" class="px-6 py-3 font-bold">Kategori</th>
                                     <th scope="col" class="px-6 py-3 font-bold">Batas Lamar</th>
                                     <th scope="col" class="px-6 py-3 font-bold">Status</th>
@@ -40,6 +46,8 @@
                                 @forelse ($careers as $career)
                                 <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $career->title }}</th>
+                                    <td class="px-6 py-4">{{ $career->company->name ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4">{{ $career->location->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $career->jobCategory->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $career->closing_date ? $career->closing_date->format('d M Y') : 'N/A' }}</td>
                                     <td class="px-6 py-4">
@@ -50,13 +58,13 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 flex justify-end space-x-2">
-                                        <a href="{{ route('admin.careers.show', $career) }}" title="Detail" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 shadow-sm">
+                                        <a href="{{ route('admin.careers.show', ['karir' => $career]) }}" title="Detail" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 shadow-sm">
                                             <i class="bi bi-eye-fill me-1"></i> Detail
                                         </a>
-                                        <a href="{{ route('admin.careers.edit', $career) }}" title="Edit" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm">
+                                        <a href="{{ route('admin.careers.edit', ['karir' => $career]) }}" title="Edit" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm">
                                             <i class="bi bi-pencil-square me-1"></i> Edit
                                         </a>
-                                        <form action="{{ route('admin.careers.destroy', $career) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus lowongan ini?');">
+                                        <form action="{{ route('admin.careers.destroy', ['karir' => $career]) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus lowongan ini?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" title="Hapus" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm">
@@ -67,14 +75,13 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 italic">Tidak ada data lowongan karir yang cocok dengan filter.</td>
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 italic">Tidak ada data lowongan karir yang cocok dengan filter.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                     
-                    {{-- 2. PAGINATION DENGAN .appends() --}}
                     <div class="mt-8 flex justify-end">
                         {!! $careers->appends(request()->query())->links() !!}
                     </div>

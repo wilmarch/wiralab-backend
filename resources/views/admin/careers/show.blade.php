@@ -43,6 +43,22 @@
                                 {{ $karir->jobCategory->name ?? 'N/A' }}
                             </dd>
                         </div>
+
+                        {{-- PERUSAHAAN (BARU) --}}
+                        <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">PERUSAHAAN</Tdt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0 font-medium">
+                                {{ $karir->company->name ?? 'N/A' }}
+                            </dd>
+                        </div>
+                        
+                        {{-- LOKASI (BARU) --}}
+                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">LOKASI</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0 font-medium">
+                                {{ $karir->location->name ?? 'N/A' }}
+                            </dd>
+                        </div>
                         
                         {{-- Status --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -75,8 +91,6 @@
                     {{-- DESKRIPSI --}}
                     <section class="mt-8 pt-6 border-t dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Deskripsi Pekerjaan</h4>
-                        
-                        {{-- KODE DIRAPIKAN: Kelas .trix-output digabung dengan kontainer --}}
                         <div class="trix-output text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
                             @if ($karir->description)
                                 {!! clean($karir->description) !!}
@@ -89,8 +103,6 @@
                     {{-- PERSYARATAN --}}
                     <section class="mt-8 pt-6 border-t dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Persyaratan</h4>
-
-                        {{-- KODE DIRAPIKAN: Kelas .trix-output digabung dengan kontainer --}}
                         <div class="trix-output text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
                             @if ($karir->requirements)
                                 {!! clean($karir->requirements) !!}
