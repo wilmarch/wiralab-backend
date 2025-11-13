@@ -4,26 +4,23 @@
             <div class="flex">
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                         <img src="{{ asset('images/wiralab-logo.png') }}" alt="Wiralab Logo" class="block h-12 w-auto"> {{-- Logo Wiralab --}}
+                         <img src="{{ asset('images/wiralab-logo.png') }}" alt="Wiralab Logo" class="block h-12 w-auto">
                     </a>
                 </div>
-                <div class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex">
+
+                {{-- REVISI: Menggunakan 'lg:flex' agar tidak nabrak di tablet --}}
+                <div class="hidden space-x-4 lg:-my-px lg:ms-10 lg:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
                     {{-- === DROPDOWN PRODUK/APLIKASI === --}}
-                    @php
-                        $productMenuActive = request()->routeIs('admin.categories.*') || request()->routeIs('admin.items.*');
-                    @endphp
-                    <div class="hidden sm:flex sm:items-center"> {{-- Hapus 'sm:ms-10' dari sini karena 'space-x-4' sudah mengatur jarak --}}
+                    @php $productMenuActive = request()->routeIs('admin.categories.*') || request()->routeIs('admin.items.*'); @endphp
+                    <div class="hidden lg:flex lg:items-center">
                         <x-dropdown align="left" width="56">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
-                                            {{ $productMenuActive 
-                                                ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' 
-                                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' 
-                                            }} 
+                                            {{ $productMenuActive ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }} 
                                             focus:outline-none">
                                     <div>{{ __('Produk/Aplikasi') }}</div>
                                     <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
@@ -39,24 +36,18 @@
                             </x-slot>
                         </x-dropdown>
                     </div>
-                    {{-- === AKHIR DROPDOWN PRODUK === --}}
 
                     <x-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
                         {{ __('Blog') }}
                     </x-nav-link>
 
                     {{-- === DROPDOWN PELATIHAN === --}}
-                    @php
-                        $trainingMenuActive = request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.pendaftar-pelatihan.*');
-                    @endphp
-                    <div class="hidden sm:flex sm:items-center">
+                    @php $trainingMenuActive = request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.pendaftar-pelatihan.*'); @endphp
+                    <div class="hidden lg:flex lg:items-center">
                         <x-dropdown align="left" width="60">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
-                                            {{ $trainingMenuActive 
-                                                ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' 
-                                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' 
-                                            }} 
+                                            {{ $trainingMenuActive ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }} 
                                             focus:outline-none">
                                     <div>{{ __('Pelatihan') }}</div>
                                     <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
@@ -72,51 +63,68 @@
                             </x-slot>
                         </x-dropdown>
                     </div>
-                    {{-- === AKHIR DROPDOWN PELATIHAN === --}}
                     
                     <x-nav-link :href="route('admin.ekatalog.index')" :active="request()->routeIs('admin.ekatalog.index')">
                         {{ __('E-Katalog') }}
                     </x-nav-link>
 
                     {{-- === DROPDOWN KARIR === --}}
-                    @php
-                        $careerMenuActive = request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.careers.*');
-                    @endphp
-                    <div class="hidden sm:flex sm:items-center">
+                    @php $careerMenuActive = request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.careers.*'); @endphp
+                    <div class="hidden lg:flex lg:items-center">
                         <x-dropdown align="left" width="60">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
-                                            {{ $careerMenuActive 
-                                                ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' 
-                                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' 
-                                            }} 
+                                            {{ $careerMenuActive ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }} 
                                             focus:outline-none">
                                     <div>{{ __('Karir') }}</div>
                                     <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
                                 </button>
                             </x-slot>
-
                             <x-slot name="content">
-                                 <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
-                                    {{ __('Pengaturan Karir') }}
-                                </x-dropdown-link>
-
                                 <x-dropdown-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                                     {{ __('Kelola Lowongan') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.job-categories.index')" :active="request()->routeIs('admin.job-categories.*')">
+                                    {{ __('Pengaturan Karir') }}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
-                    {{-- === AKHIR DROPDOWN KARIR === --}}
                     
                     <x-nav-link :href="route('admin.kontak.index')" :active="request()->routeIs('admin.kontak.*')">
                         {{ __('Kontak') }}
                     </x-nav-link>
                     
+                    {{-- === DROPDOWN MANAJEMEN USER (Hanya Superadmin) === --}}
+                    @if (Auth::user()->role == 'superadmin')
+                        <div class="hidden lg:flex lg:items-center">
+                            <x-dropdown align="left" width="48">
+                                <x-slot name="trigger">
+                                    <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
+                                                {{ request()->routeIs('admin.users.*') 
+                                                    ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' 
+                                                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' 
+                                                }} 
+                                                focus:outline-none">
+                                        <div><i class="bi bi-people-fill"></i> User</div>
+                                        <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
+                                    </button>
+                                </x-slot>
+                                <x-slot name="content">
+                                    <x-dropdown-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                                        {{ __('Daftar User') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('admin.users.create')" :active="request()->routeIs('admin.users.create')">
+                                        {{ __('Tambah User Baru') }}
+                                    </x-dropdown-link>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden lg:flex lg:items-center lg:ms-6">
                 {{-- Tombol Dark Mode --}}
                 <button id="theme-toggle" type="button" class="ms-3 inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <span class="sr-only">Toggle dark mode</span>
@@ -128,13 +136,11 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
-
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </div>
                         </button>
                     </x-slot>
-
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
@@ -149,7 +155,8 @@
                 </x-dropdown>
             </div>
 
-            <div class="-me-2 flex items-center sm:hidden">
+            {{-- REVISI: Tampilkan hamburger di bawah 'lg' (1024px) --}}
+            <div class="-me-2 flex items-center lg:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -160,13 +167,14 @@
         </div>
     </div>
 
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    {{-- REVISI: Sembunyikan menu ini di atas 'lg' (1024px) --}}
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-             {{-- Responsive Admin Links (Link dropdown dipisah di mobile) --}}
+             {{-- Responsive Admin Links (Dipisah agar mudah di-tap) --}}
              <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
                  {{ __('Kelola Kategori') }}
              </x-responsive-nav-link>
@@ -178,7 +186,6 @@
                  {{ __('Blog') }}
              </x-responsive-nav-link>
              
-             {{-- Responsive Pelatihan (Dipisah) --}}
              <x-responsive-nav-link :href="route('admin.pelatihan.index')" :active="request()->routeIs('admin.pelatihan.*')">
                  {{ __('Pengaturan Pelatihan') }}
              </x-responsive-nav-link>
@@ -190,7 +197,6 @@
                  {{ __('E-Katalog') }}
              </x-responsive-nav-link>
 
-             {{-- Responsive Karir (Dipisah) --}}
              <x-responsive-nav-link :href="route('admin.careers.index')" :active="request()->routeIs('admin.careers.*')">
                 {{ __('Kelola Lowongan') }}
              </x-responsive-nav-link>
@@ -198,11 +204,24 @@
                 {{ __('Pengaturan Karir') }}
              </x-responsive-nav-link>
              
-             {{-- Responsive Kontak (Aktif) --}}
              <x-responsive-nav-link :href="route('admin.kontak.index')" :active="request()->routeIs('admin.kontak.*')">
                  {{ __('Kontak') }}
              </x-responsive-nav-link>
-            {{-- End Responsive Admin Links --}}
+
+            {{-- Responsive Manajemen User (Hanya Superadmin) --}}
+            @if (Auth::user()->role == 'superadmin')
+                <div class="pt-2 pb-1 border-t border-gray-200 dark:border-gray-600">
+                    <div class="px-4">
+                        <div class="font-medium text-base text-gray-800 dark:text-gray-200">Manajemen User</div>
+                    </div>
+                     <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                         {{ __('Daftar User') }}
+                     </x-responsive-nav-link>
+                     <x-responsive-nav-link :href="route('admin.users.create')" :active="request()->routeIs('admin.users.create')">
+                        {{ __('Tambah User Baru') }}
+                    </x-responsive-nav-link>
+                </div>
+            @endif
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
