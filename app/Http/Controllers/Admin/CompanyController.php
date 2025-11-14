@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str; 
-use Illuminate\Validation\Rule; 
-use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class CompanyController extends Controller
 {
-
     public function index()
     {
         $companies = Company::latest()->paginate(15);
@@ -23,7 +24,6 @@ class CompanyController extends Controller
         return view('admin.companies.create');
     }
 
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -31,25 +31,35 @@ class CompanyController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', 
         ]);
 
-        // Handle File Upload (Logo)
+        // --- LOGIKA KOMPRESI (INTERVENTION V3 + GD DRIVER) ---
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('companies', 'public');
-            $validatedData['logo_url'] = $path; 
+            $file = $request->file('logo');
+            $filename = 'companies/' . Str::uuid() . '.webp'; // Simpan sebagai .webp
+
+            // 1. Buat manager yang HANYA menggunakan GD
+            $manager = new ImageManager(new Driver());
+            
+            // 2. Baca file, resize, dan encode
+            $image = $manager->read($file->getRealPath());
+            $image->resizeDown(400, 400); // Logo lebih kecil (Max 400px)
+
+            // 3. Encode ke format WebP 80% (INI PERBAIKANNYA)
+            $encodedImage = $image->toWebp(80); 
+
+            // 4. Simpan hasil encode (string) ke storage
+            Storage::disk('public')->put($filename, (string) $encodedImage);
+            
+            $validatedData['logo_url'] = $filename; // Simpan path ke database
         }
 
-        // Generate Slug
         $validatedData['slug'] = Str::slug($validatedData['name']);
-        
-        // Cek keunikan Slug
         $originalSlug = $validatedData['slug'];
         $count = 1;
         while (Company::where('slug', $validatedData['slug'])->exists()) {
             $validatedData['slug'] = $originalSlug . '-' . $count++;
         }
 
-
         Company::create($validatedData);
-
 
         return redirect()->route('admin.companies.index')
                          ->with('success', 'Perusahaan baru berhasil ditambahkan.');
@@ -65,7 +75,7 @@ class CompanyController extends Controller
         return view('admin.companies.edit', compact('perusahaan'));
     }
 
-    public function update(Request $request, Company $perusahaan) 
+    public function update(Request $request, Company $perusahaan)
     {
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('companies')->ignore($perusahaan->id)],
@@ -82,12 +92,25 @@ class CompanyController extends Controller
         }
         
         if ($request->hasFile('logo')) {
+            // Hapus file lama
             if ($perusahaan->logo_url && Storage::disk('public')->exists($perusahaan->logo_url)) {
                 Storage::disk('public')->delete($perusahaan->logo_url);
             }
-            $path = $request->file('logo')->store('companies', 'public');
-            $validatedData['logo_url'] = $path;
+            
+            $file = $request->file('logo');
+            $filename = 'companies/' . Str::uuid() . '.webp'; // Simpan sebagai .webp
+
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            $image->resizeDown(400, 400);
+
+            // (INI PERBAIKANNYA)
+            $encodedImage = $image->toWebp(80);
+            Storage::disk('public')->put($filename, (string) $encodedImage);
+
+            $validatedData['logo_url'] = $filename;
         }
+
 
         $perusahaan->update($validatedData);
 

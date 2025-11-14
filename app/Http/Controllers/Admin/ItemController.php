@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ItemController extends Controller
 {
@@ -41,9 +43,25 @@ class ItemController extends Controller
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
         
+        // --- LOGIKA KOMPRESI (INTERVENTION V3 + GD DRIVER) ---
         if ($request->hasFile('image_url')) {
-            $path = $request->file('image_url')->store('items', 'public');
-            $validatedData['image_url'] = $path;
+            $file = $request->file('image_url');
+            $filename = 'items/' . Str::uuid() . '.webp'; // <-- Simpan sebagai .webp
+
+            // 1. Buat manager yang HANYA menggunakan GD
+            $manager = new ImageManager(new Driver());
+            
+            // 2. Baca file dan resize
+            $image = $manager->read($file->getRealPath());
+            $image->resizeDown(1200, 1200);
+
+            // 3. Encode ke format WebP 80% (Perbaikan untuk 'Could not convert to string')
+            $encodedImage = $image->toWebp(80); 
+
+            // 4. Simpan hasil encode (string) ke storage
+            Storage::disk('public')->put($filename, (string) $encodedImage);
+            
+            $validatedData['image_url'] = $filename;
         }
 
         $validatedData['slug'] = Str::slug($validatedData['name']);
@@ -93,12 +111,23 @@ class ItemController extends Controller
         }
         
         if ($request->hasFile('image_url')) {
+            // Hapus file lama
             if ($item->image_url && Storage::disk('public')->exists($item->image_url)) {
                 Storage::disk('public')->delete($item->image_url);
             }
             
-            $path = $request->file('image_url')->store('items', 'public');
-            $validatedData['image_url'] = $path;
+            $file = $request->file('image_url');
+            $filename = 'items/' . Str::uuid() . '.webp'; // <-- Simpan sebagai .webp
+
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            $image->resizeDown(1200, 1200);
+
+            // (Perbaikan untuk 'Could not convert to string')
+            $encodedImage = $image->toWebp(80);
+            Storage::disk('public')->put($filename, (string) $encodedImage);
+
+            $validatedData['image_url'] = $filename;
         }
 
         $item->update($validatedData);

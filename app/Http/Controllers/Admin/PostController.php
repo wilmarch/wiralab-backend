@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post; 
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class PostController extends Controller
 {
-
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         $posts = Post::filter($request->only(['search', 'post_type', 'is_published']))
                        ->latest()
@@ -37,7 +38,6 @@ class PostController extends Controller
         ]);
 
         $validatedData['slug'] = Str::slug($validatedData['title']);
-        
         $originalSlug = $validatedData['slug'];
         $count = 1;
         while (Post::where('slug', $validatedData['slug'])->exists()) {
@@ -45,8 +45,19 @@ class PostController extends Controller
         }
         
         if ($request->hasFile('image_url')) {
-            $path = $request->file('image_url')->store('posts', 'public');
-            $validatedData['image_url'] = $path;
+            $file = $request->file('image_url');
+            $filename = 'posts/' . Str::uuid() . '.webp';
+
+            $manager = new ImageManager(new Driver());
+            
+            $image = $manager->read($file->getRealPath());
+            $image->resizeDown(1200, 1200);
+
+            $encodedImage = $image->toWebp(80); 
+
+            Storage::disk('public')->put($filename, (string) $encodedImage);
+            
+            $validatedData['image_url'] = $filename;
         }
 
         $validatedData['is_published'] = $request->has('is_published');
@@ -78,7 +89,6 @@ class PostController extends Controller
 
         if ($blog->title !== $validatedData['title']) { 
             $validatedData['slug'] = Str::slug($validatedData['title']);
-            
             $originalSlug = $validatedData['slug'];
             $count = 1;
             while (Post::where('slug', $validatedData['slug'])->where('id', '!=', $blog->id)->exists()) {
@@ -90,8 +100,18 @@ class PostController extends Controller
             if ($blog->image_url && Storage::disk('public')->exists($blog->image_url)) {
                 Storage::disk('public')->delete($blog->image_url);
             }
-            $path = $request->file('image_url')->store('posts', 'public');
-            $validatedData['image_url'] = $path;
+            
+            $file = $request->file('image_url');
+            $filename = 'posts/' . Str::uuid() . '.webp';
+
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            $image->resizeDown(1200, 1200);
+
+            $encodedImage = $image->toWebp(80);
+            Storage::disk('public')->put($filename, (string) $encodedImage);
+
+            $validatedData['image_url'] = $filename;
         }
 
         $validatedData['is_published'] = $request->has('is_published');
