@@ -11,6 +11,11 @@ class Item extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'category_id',
         'type',
@@ -18,12 +23,22 @@ class Item extends Model
         'slug',
         'description',
         'image_url',
+        'is_featured',   
+        'inaproc_url',  
+        'brosur_url',    
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active' => 'boolean', 
+        'is_featured' => 'boolean', 
     ];
     
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
@@ -56,6 +71,11 @@ class Item extends Model
         // Filter berdasarkan Kategori ID
         $query->when($filters['category_id'] ?? false, function ($query, $category_id) {
             return $query->where('category_id', $category_id);
+        });
+
+        // Filter berdasarkan Status Unggulan (0 atau 1)
+        $query->when(isset($filters['is_featured']) && $filters['is_featured'] !== '', function ($query) use ($filters) {
+             return $query->where('is_featured', $filters['is_featured']);
         });
     }
 }

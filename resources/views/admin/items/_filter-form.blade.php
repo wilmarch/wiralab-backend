@@ -8,7 +8,9 @@
         </div>
 
         {{-- Baris Kedua: Filter Dropdown --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{-- REVISI: Ubah 'md:grid-cols-2' menjadi 'md:grid-cols-3' --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
             {{-- Filter Tipe --}}
             <div>
                 <x-input-label for="type" :value="__('Filter Tipe Item')" />
@@ -24,12 +26,21 @@
                 <x-input-label for="category_id" :value="__('Filter Kategori')" />
                 <select name="category_id" id="category_id" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
                     <option value="">Semua Kategori</option>
-                    {{-- Loop data $categories yang dikirim dari controller --}}
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
                             {{ $category->name }} ({{ $category->category_type }})
                         </option>
                     @endforeach
+                </select>
+            </div>
+
+            {{-- ↓↓↓ TAMBAHKAN DROPDOWN BARU INI ↓↓↓ --}}
+            <div>
+                <x-input-label for="is_featured" :value="__('Filter Produk Unggulan')" />
+                <select name="is_featured" id="is_featured" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
+                    <option value="">Semua Status</option>
+                    <option value="1" {{ request('is_featured') == '1' ? 'selected' : '' }}>Ya (Unggulan)</option>
+                    <option value="0" {{ request('is_featured') === '0' ? 'selected' : '' }}>Tidak</option>
                 </select>
             </div>
         </div>

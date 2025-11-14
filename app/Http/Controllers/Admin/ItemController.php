@@ -20,7 +20,7 @@ class ItemController extends Controller
         $categories = Category::orderBy('name')->get();
 
         $items = Item::with('category')
-                     ->filter($request->only(['search', 'type', 'category_id'])) 
+                     ->filter($request->only(['search', 'type', 'category_id', 'is_featured'])) 
                      ->latest()
                      ->paginate(15);
 
@@ -35,34 +35,39 @@ class ItemController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Validasi Input (Menambahkan 3 field baru)
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string', 
             'type' => ['required', Rule::in(['product', 'application'])],
             'category_id' => 'required|exists:categories,id',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'is_featured' => 'nullable|boolean', // <-- BARU
+            'inaproc_url' => 'nullable|url|max:1000', // <-- BARU
+            'brosur_url' => 'nullable|file|mimes:pdf|max:5120', // <-- BARU (PDF maks 5MB)
         ]);
         
-        // --- LOGIKA KOMPRESI (INTERVENTION V3 + GD DRIVER) ---
+        // --- LOGIKA KOMPRESI GAMBAR ---
         if ($request->hasFile('image_url')) {
             $file = $request->file('image_url');
-            $filename = 'items/' . Str::uuid() . '.webp'; // <-- Simpan sebagai .webp
-
-            // 1. Buat manager yang HANYA menggunakan GD
+            $filename = 'items/' . Str::uuid() . '.webp'; 
             $manager = new ImageManager(new Driver());
-            
-            // 2. Baca file dan resize
             $image = $manager->read($file->getRealPath());
             $image->resizeDown(1200, 1200);
-
-            // 3. Encode ke format WebP 80% (Perbaikan untuk 'Could not convert to string')
             $encodedImage = $image->toWebp(80); 
-
-            // 4. Simpan hasil encode (string) ke storage
             Storage::disk('public')->put($filename, (string) $encodedImage);
-            
             $validatedData['image_url'] = $filename;
         }
+
+        // --- LOGIKA SIMPAN BROSUR (PDF) ---
+        if ($request->hasFile('brosur_url')) {
+            // PDF tidak dikompres, langsung simpan
+            $path = $request->file('brosur_url')->store('brosurs', 'public');
+            $validatedData['brosur_url'] = $path;
+        }
+
+        // Handle Checkbox
+        $validatedData['is_featured'] = $request->has('is_featured');
 
         $validatedData['slug'] = Str::slug($validatedData['name']);
         
@@ -92,17 +97,21 @@ class ItemController extends Controller
 
     public function update(Request $request, Item $item)
     {
+        // 1. Validasi Input (Menambahkan 3 field baru)
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string', 
             'type' => ['required', Rule::in(['product', 'application'])],
             'category_id' => 'required|exists:categories,id',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'is_featured' => 'nullable|boolean', // <-- BARU
+            'inaproc_url' => 'nullable|url|max:1000', // <-- BARU
+            'brosur_url' => 'nullable|file|mimes:pdf|max:5120', // <-- BARU
         ]);
         
         if ($item->name !== $validatedData['name']) {
             $validatedData['slug'] = Str::slug($validatedData['name']);
-            
+            // ... (logic slug)
             $originalSlug = $validatedData['slug'];
             $count = 1;
             while (Item::where('slug', $validatedData['slug'])->where('id', '!=', $item->id)->exists()) {
@@ -110,25 +119,34 @@ class ItemController extends Controller
             }
         }
         
+        // --- LOGIKA KOMPRESI GAMBAR ---
         if ($request->hasFile('image_url')) {
-            // Hapus file lama
             if ($item->image_url && Storage::disk('public')->exists($item->image_url)) {
                 Storage::disk('public')->delete($item->image_url);
             }
-            
             $file = $request->file('image_url');
-            $filename = 'items/' . Str::uuid() . '.webp'; // <-- Simpan sebagai .webp
-
+            $filename = 'items/' . Str::uuid() . '.webp';
             $manager = new ImageManager(new Driver());
             $image = $manager->read($file->getRealPath());
             $image->resizeDown(1200, 1200);
-
-            // (Perbaikan untuk 'Could not convert to string')
             $encodedImage = $image->toWebp(80);
             Storage::disk('public')->put($filename, (string) $encodedImage);
-
             $validatedData['image_url'] = $filename;
         }
+
+        // --- LOGIKA SIMPAN BROSUR (PDF) ---
+        if ($request->hasFile('brosur_url')) {
+            // Hapus brosur lama jika ada
+            if ($item->brosur_url && Storage::disk('public')->exists($item->brosur_url)) {
+                Storage::disk('public')->delete($item->brosur_url);
+            }
+            // Simpan brosur baru
+            $path = $request->file('brosur_url')->store('brosurs', 'public');
+            $validatedData['brosur_url'] = $path;
+        }
+
+        // Handle Checkbox
+        $validatedData['is_featured'] = $request->has('is_featured');
 
         $item->update($validatedData);
 
@@ -138,9 +156,16 @@ class ItemController extends Controller
 
     public function destroy(Item $item)
     {
+        // Hapus gambar
         if ($item->image_url && Storage::disk('public')->exists($item->image_url)) {
             Storage::disk('public')->delete($item->image_url);
         }
+        
+        // Hapus brosur (BARU)
+        if ($item->brosur_url && Storage::disk('public')->exists($item->brosur_url)) {
+            Storage::disk('public')->delete($item->brosur_url);
+        }
+        
         $item->delete();
 
         return redirect()->route('admin.items.index')
