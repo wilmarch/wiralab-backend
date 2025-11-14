@@ -6,17 +6,28 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-xl">
                 
-                <form method="POST" action="{{ route('admin.companies.store') }}" novalidate>
+                {{-- Tambahkan enctype untuk upload file --}}
+                <form method="POST" action="{{ route('admin.companies.store') }}" novalidate enctype="multipart/form-data">
                     @csrf
                     
                     <div class="p-6 lg:p-8 text-gray-900 dark:text-gray-100 space-y-6">
+                        
+                        {{-- Nama Perusahaan --}}
                         <div class="mb-4">
                             <x-input-label for="name" :value="__('Nama Perusahaan (cth: PT Wiralab Analitika Solusindo)')" />
                             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                        </div>
+
+                        {{-- Logo Perusahaan (BARU) --}}
+                        <div class="mb-4">
+                            <x-input-label for="logo" :value="__('Logo Perusahaan (Opsional, Max 2MB)')" />
+                            <input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/webp"
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 mt-1"/>
+                            <x-input-error :messages="$errors->get('logo')" class="mt-2" />
                         </div>
                     </div>
                     

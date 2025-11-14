@@ -13,6 +13,7 @@ class Company extends Model
     protected $fillable = [
         'name',
         'slug',
+        'logo_url',
     ];
 
     public function careers(): HasMany
