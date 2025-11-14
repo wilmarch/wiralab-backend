@@ -40,20 +40,16 @@ class LocationController extends Controller
                          ->with('success', 'Lokasi karir baru berhasil ditambahkan.');
     }
 
-    // PERBAIKAN: Pastikan parameter adalah $lokasi
     public function show(Location $lokasi)
     {
         return redirect()->route('admin.locations.edit', $lokasi);
     }
 
-    // PERBAIKAN: Pastikan parameter adalah $lokasi
     public function edit(Location $lokasi)
     {
-        // PERBAIKAN: Pastikan compact mengirimkan 'lokasi'
         return view('admin.locations.edit', compact('lokasi'));
     }
 
-    // PERBAIKAN: Pastikan parameter adalah $lokasi
     public function update(Request $request, Location $lokasi)
     {
         $validatedData = $request->validate([
@@ -75,7 +71,6 @@ class LocationController extends Controller
                          ->with('success', 'Lokasi karir berhasil diperbarui.');
     }
 
-    // PERBAIKAN: Pastikan parameter adalah $lokasi
     public function destroy(Location $lokasi)
     {
         $lokasi->delete();

@@ -15,17 +15,11 @@ class Location extends Model
         'slug',
     ];
 
-    /**
-     * Mendapatkan semua lowongan (careers) untuk lokasi ini.
-     */
     public function careers(): HasMany
     {
         return $this->hasMany(Career::class);
     }
     
-    /**
-     * Menggunakan 'slug' untuk pencarian route.
-     */
     public function getRouteKeyName(): string
     {
         return 'slug';

@@ -55,24 +55,19 @@ class JobCategoryController extends Controller
                          ->with('success_category', 'Kategori Pekerjaan baru berhasil ditambahkan!');
     }
 
-    // PERBAIKAN: Ganti $jobCategory -> $pengaturan_karir
     public function show(JobCategory $pengaturan_karir)
     {
         return redirect()->route('admin.job-categories.edit', $pengaturan_karir);
     }
 
-    // PERBAIKAN: Ganti $jobCategory -> $pengaturan_karir
-    // DAN kirim dengan nama 'jobCategory' agar view tetap berfungsi
     public function edit(JobCategory $pengaturan_karir)
     {
         return view('admin.job-categories.edit', ['jobCategory' => $pengaturan_karir]);
     }
 
-    // PERBAIKAN: Ganti $jobCategory -> $pengaturan_karir
     public function update(Request $request, JobCategory $pengaturan_karir)
     {
         $validatedData = $request->validate([
-            // PERBAIKAN: ignore $pengaturan_karir->id
             'name' => ['required', 'string', 'max:255', Rule::unique('job_categories')->ignore($pengaturan_karir->id)],
         ]);
 
@@ -85,16 +80,15 @@ class JobCategoryController extends Controller
             }
         }
 
-        $pengaturan_karir->update($validatedData); // PERBAIKAN
+        $pengaturan_karir->update($validatedData); 
 
         return redirect()->route('admin.job-categories.index')
                          ->with('success_category', 'Kategori Pekerjaan berhasil diperbarui!');
     }
 
-    // PERBAIKAN: Ganti $jobCategory -> $pengaturan_karir
     public function destroy(JobCategory $pengaturan_karir)
     {
-        $pengaturan_karir->delete(); // PERBAIKAN
+        $pengaturan_karir->delete(); 
         return redirect()->route('admin.job-categories.index')
                          ->with('success_category', 'Kategori Pekerjaan berhasil dihapus!');
     }
