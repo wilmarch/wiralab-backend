@@ -36,9 +36,28 @@
                         </x-dropdown>
                     </div>
 
-                    <x-nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
-                        {{ __('Blog') }}
-                    </x-nav-link>
+                  {{-- === DROPDOWN BLOG (REVISI) === --}}
+@php $blogMenuActive = request()->routeIs('admin.blog.*') || request()->routeIs('admin.blog-categories.*'); @endphp
+<div class="hidden lg:flex lg:items-center">
+    <x-dropdown align="left" width="56">
+        <x-slot name="trigger">
+            <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out
+                        {{ $blogMenuActive ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100 focus:border-indigo-700' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }} 
+                        focus:outline-none">
+                <div>{{ __('Blog') }}</div>
+                <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
+            </button>
+        </x-slot>
+        <x-slot name="content">
+            <x-dropdown-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">
+                {{ __('Kelola Postingan') }}
+            </x-dropdown-link>
+            <x-dropdown-link :href="route('admin.blog-categories.index')" :active="request()->routeIs('admin.blog-categories.*')">
+                {{ __('Kelola Kategori Blog') }}
+            </x-dropdown-link>
+        </x-slot>
+    </x-dropdown>
+</div>
 
                     {{-- === DROPDOWN PELATIHAN === --}}
                     @php $trainingMenuActive = request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.pendaftar-pelatihan.*'); @endphp

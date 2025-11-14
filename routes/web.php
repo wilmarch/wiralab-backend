@@ -3,8 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Redirect;
-
-// Import Semua Controller Admin
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\PostController;
@@ -15,10 +13,9 @@ use App\Http\Controllers\Admin\TrainingRegistrationController;
 use App\Http\Controllers\Admin\JobCategoryController;
 use App\Http\Controllers\Admin\CareerController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\ContactSettingsController;
-use App\Http\Controllers\Admin\PageSettingController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\BlogCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('items', ItemController::class);
         Route::resource('blog', PostController::class);
+        Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
         
         Route::get('/e-katalog', [EkatalogController::class, 'index'])->name('ekatalog.index');
         Route::post('/e-katalog/update', [EkatalogController::class, 'update'])->name('ekatalog.update');
@@ -64,15 +62,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('pengaturan-karir', JobCategoryController::class)->names('job-categories');
         Route::post('karir-gform-update', [JobCategoryController::class, 'updateGform'])->name('careers.updateGform');
         Route::resource('karir', CareerController::class)->names('careers');
-
-        // --- Modul Pengaturan (Dipindahkan ke sini) ---
-        Route::get('pengaturan-kontak', [ContactSettingsController::class, 'index'])->name('contact-settings.index');
-        Route::post('pengaturan-kontak', [ContactSettingsController::class, 'update'])->name('contact-settings.update');
-        
-        Route::get('pengaturan-halaman', [PageSettingController::class, 'index'])->name('page-settings.index');
-        Route::get('pengaturan-halaman/{page_setting:slug}/edit', [PageSettingController::class, 'edit'])->name('page-settings.edit');
-        Route::patch('pengaturan-halaman/{page_setting:slug}', [PageSettingController::class, 'update'])->name('page-settings.update');
-
         Route::resource('perusahaan', CompanyController::class)->names('companies');
         Route::resource('lokasi', LocationController::class)->names('locations');
 

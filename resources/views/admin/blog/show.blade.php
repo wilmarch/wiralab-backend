@@ -24,7 +24,7 @@
             {{-- KARTU UTAMA --}}
             <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-xl overflow-hidden">
                 
-                {{-- AREA 1: GAMBAR (Tetap Sama) --}}
+                {{-- AREA 1: GAMBAR --}}
                 <div class="w-full bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 p-6">
                     @if ($blog->image_url)
                         <img src="{{ Storage::url($blog->image_url) }}" alt="{{ $blog->title }}" 
@@ -41,14 +41,15 @@
                 {{-- AREA 2: JUDUL & DETAIL UTAMA --}}
                 <div class="p-6 md:p-8">
                     
-                    {{-- Judul Postingan (Tetap Sama) --}}
+                    {{-- Judul Postingan --}}
                     <div class="border-b pb-4 mb-5 dark:border-gray-700">
                         <dt class="text-xs font-medium text-gray-500 dark:text-gray-400">JUDUL POSTINGAN</dt>
                         <dd class="mt-0.5 text-2xl font-extrabold text-gray-900 dark:text-white">{{ $blog->title }}</dd>
                     </div>
 
-                    {{-- DETAIL INFORMASI (Tetap Sama) --}}
+                    {{-- DETAIL INFORMASI --}}
                     <dl class="rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
+                        
                         {{-- Tipe --}}
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">TIPE</dt>
@@ -60,8 +61,17 @@
                                 @endif
                             </dd>
                         </div>
-                        {{-- Status --}}
+                        
+                        {{-- KATEGORI (BARU) --}}
                         <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">KATEGORI</dt>
+                            <dd class="mt-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400 sm:col-span-2 sm:mt-0">
+                                {{ $blog->blogCategory->name ?? 'Tidak Berkategori' }}
+                            </dd>
+                        </div>
+
+                        {{-- Status (Background diubah) --}}
+                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">STATUS</dt>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
                                 @if ($blog->is_published)
@@ -71,18 +81,21 @@
                                 @endif
                             </dd>
                         </div>
-                        {{-- Dibuat Pada --}}
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+
+                        {{-- Dibuat Pada (Background diubah) --}}
+                        <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">DIBUAT PADA</DT>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0">{{ $blog->created_at->format('d M Y H:i:s') }}</dd>
                         </div>
-                        {{-- Diperbarui Terakhir --}}
-                        <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        
+                        {{-- Diperbarui Terakhir (Background diubah) --}}
+                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">DIPERBARUI PADA</DT>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0">{{ $blog->updated_at->format('d M Y H:i:s') }}</dd>
                         </div>
-                        {{-- Slug --}}
-                        <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        
+                        {{-- Slug (Background diubah) --}}
+                        <div class="bg-white dark:bg-gray-800 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">SLUG (URL KEY)</dt>
                             <dd class="mt-1 text-sm font-mono text-gray-900 dark:text-gray-100 sm:col-span-2 sm:mt-0 break-all">{{ $blog->slug }}</dd>
                         </div>
@@ -92,9 +105,6 @@
                     {{-- KONTEN LENGKAP --}}
                     <section class="mt-8 pt-6 border-t dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Konten Lengkap</h4>
-                        
-                        {{-- ↓↓↓ PERUBAHAN DI SINI ↓↓↓ --}}
-                        {{-- Menggunakan kelas 'trix-output' (dari app.css) dan {!! clean(...) !!} --}}
                         <div class="trix-output text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-inner border border-gray-200 dark:border-gray-600">
                             @if ($blog->content)
                                 {!! clean($blog->content) !!}
@@ -102,8 +112,6 @@
                                 <p class="text-gray-500 dark:text-gray-400 italic">Tidak ada konten.</p>
                             @endif
                         </div>
-                        {{-- ↑↑↑ AKHIR PERUBAHAN ↑↑↑ --}}
-                        
                     </section>
                 </div>
             </div>

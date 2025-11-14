@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; 
 
 class Post extends Model
 {
@@ -14,14 +15,20 @@ class Post extends Model
         'title',
         'slug',
         'content',
-        'post_type', 
+        'post_type',
         'image_url',
         'is_published',
+        'blog_category_id', 
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
     ];
+
+    public function blogCategory(): BelongsTo
+    {
+        return $this->belongsTo(BlogCategory::class, 'blog_category_id');
+    }
 
     public function getRouteKeyName(): string
     {
@@ -32,7 +39,7 @@ class Post extends Model
      * Scope a query to only include posts based on filters.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  array  $filters (Contoh: ['search' => 'judul', 'post_type' => 'artikel', 'is_published' => '1'])
+     * @param  array  $filters
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter(Builder $query, array $filters): void
@@ -49,8 +56,12 @@ class Post extends Model
         
         // Filter berdasarkan Status (Published/Draft)
         $query->when(isset($filters['is_published']) && $filters['is_published'] !== '', function ($query) use ($filters) {
-             // Cek '0' (Draft) atau '1' (Published)
              return $query->where('is_published', $filters['is_published']);
+        });
+
+        // Filter berdasarkan Kategori Blog
+        $query->when($filters['blog_category_id'] ?? false, function ($query, $category_id) {
+            return $query->where('blog_category_id', $category_id);
         });
     }
 }

@@ -1,3 +1,5 @@
+{{-- resources/views/admin/blog/_filter-form.blade.php --}}
+
 <div class="mb-6 bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
     <form action="{{ route('admin.blog.index') }}" method="GET" class="space-y-4">
         
@@ -7,8 +9,9 @@
             <x-text-input id="search" class="block mt-1 w-full" type="text" name="search" :value="request('search')" placeholder="Ketik judul..."/>
         </div>
 
-        {{-- Baris Kedua: Filter Dropdown --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{-- Baris Kedua: Filter Dropdown (Grid 3 kolom) --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
             {{-- Filter Tipe --}}
             <div>
                 <x-input-label for="post_type" :value="__('Filter Tipe Postingan')" />
@@ -19,13 +22,26 @@
                 </select>
             </div>
 
+            {{-- Filter Kategori (BARU) --}}
+            <div>
+                <x-input-label for="blog_category_id" :value="__('Filter Kategori')" />
+                <select name="blog_category_id" id="blog_category_id" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
+                    <option value="">Semua Kategori</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('blog_category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
             {{-- Filter Status --}}
             <div>
                 <x-input-label for="is_published" :value="__('Filter Status')" />
                 <select name="is_published" id="is_published" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm">
                     <option value="">Semua Status</option>
                     <option value="1" {{ request('is_published') == '1' ? 'selected' : '' }}>Published</option>
-                    <option value="0" {{ request('is_published') == '0' ? 'selected' : '' }}>Draft</option>
+                    <option value="0" {{ request('is_published') === '0' ? 'selected' : '' }}>Draft</option>
                 </select>
             </div>
         </div>
